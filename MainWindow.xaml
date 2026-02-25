@@ -5,7 +5,10 @@
         Background="{StaticResource BgPage}" WindowStartupLocation="CenterScreen"
         Closing="Window_Closing">
     <Grid>
-        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
         <!-- HEADER -->
         <Border Background="{StaticResource NavBg}" Padding="20,8">
@@ -27,88 +30,281 @@
             <!-- ═══════════════ CONFIGURATION ═══════════════ -->
             <TabItem Header="CONFIGURATION" Style="{StaticResource TI}">
                 <Grid Margin="20,14,20,20">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="14" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="14" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="14" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                    <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource Card}"><StackPanel>
-                        <TextBlock Style="{StaticResource Hdr}" Text="Site Connection" />
-                        <TextBlock Style="{StaticResource Lbl}" Text="Site URL" /><TextBox x:Name="txtUrl" Style="{StaticResource TB}" Margin="0,0,0,8" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel><TextBlock Style="{StaticResource Lbl}" Text="Username" /><TextBox x:Name="txtLogin" Style="{StaticResource TB}" /></StackPanel>
-                            <StackPanel Grid.Column="2"><TextBlock Style="{StaticResource Lbl}" Text="Password" /><TextBox x:Name="txtPwd" Style="{StaticResource TB}" /></StackPanel></Grid>
-                        <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel><TextBlock Style="{StaticResource Lbl}" Text="Language" /><TextBox x:Name="txtLang" Style="{StaticResource TB}" /></StackPanel>
-                            <StackPanel Grid.Column="2"><TextBlock Style="{StaticResource Lbl}" Text="Company ID" /><TextBox x:Name="txtCmp" Style="{StaticResource TB}" /></StackPanel></Grid>
-                        <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel><TextBlock Style="{StaticResource Lbl}" Text="RM Host" /><TextBox x:Name="txtRm" Style="{StaticResource TB}" /></StackPanel>
-                            <StackPanel Grid.Column="2"><TextBlock Style="{StaticResource Lbl}" Text="Acumatica Version" /><TextBox x:Name="txtVer" Style="{StaticResource TB}" /></StackPanel></Grid>
-                    </StackPanel></Border>
+                    <!-- Site Connection Card -->
+                    <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Hdr}" Text="Site Connection" />
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Site URL" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtUrl" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Username" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtLogin" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Password" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtPwd" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Language" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtLang" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Company ID" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtCmp" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="RM Host" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtRm" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Version" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtVer" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
 
-                    <Border Grid.Column="2" Grid.Row="0" Style="{StaticResource Card}"><StackPanel>
-                        <TextBlock Style="{StaticResource Hdr}" Text="Database" />
-                        <TextBlock Style="{StaticResource Lbl}" Text="SQL Server" /><TextBox x:Name="txtSrv" Style="{StaticResource TB}" Margin="0,0,0,8" />
-                        <TextBlock Style="{StaticResource Lbl}" Text="Database Name" /><TextBox x:Name="txtDb" Style="{StaticResource TB}" Margin="0,0,0,8" />
-                        <TextBlock Style="{StaticResource Lbl}" Text="Restore Backup (.bak)" />
-                        <Grid Margin="0,0,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtBak" Style="{StaticResource TB}" />
-                            <Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="bak" />
-                            <Button Grid.Column="2" Content="Restore Now" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="BtnRestore_Click" /></Grid>
-                        <TextBlock Style="{StaticResource Lbl}" Text="Post-Run Backup Folder" />
-                        <Grid Margin="0,0,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtBakOut" Style="{StaticResource TB}" />
-                            <Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="bakout" /></Grid>
-                        <TextBlock Style="{StaticResource Lbl}" Text="Backup After Each Test" />
-                        <ComboBox x:Name="cmbBak" Style="{StaticResource CB}"><ComboBoxItem Content="Always" /><ComboBoxItem Content="Failed Only" IsSelected="True" /><ComboBoxItem Content="Never" /></ComboBox>
-                    </StackPanel></Border>
+                    <!-- Database Card -->
+                    <Border Grid.Column="2" Grid.Row="0" Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Hdr}" Text="Database" />
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="SQL Server" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtSrv" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Database" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtDb" Grid.Column="1" Style="{StaticResource TB}" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Backup File" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtBak" Grid.Column="1" Style="{StaticResource TB}" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="bak" />
+                                <Button Grid.Column="3" Content="Restore" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="BtnRestore_Click" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Backup Folder" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtBakOut" Grid.Column="1" Style="{StaticResource TB}" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="bakout" />
+                            </Grid>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Backup Mode" VerticalAlignment="Center" />
+                                <ComboBox x:Name="cmbBak" Grid.Column="1" Style="{StaticResource CB}">
+                                    <ComboBoxItem Content="Always" />
+                                    <ComboBoxItem Content="Failed Only" IsSelected="True" />
+                                    <ComboBoxItem Content="Never" />
+                                </ComboBox>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
 
-                    <Border Grid.Column="0" Grid.Row="2" Style="{StaticResource Card}"><StackPanel>
-                        <TextBlock Style="{StaticResource Hdr}" Text="Paths &amp; Browser" />
-                        <TextBlock Style="{StaticResource Lbl}" Text="Browser Path" />
-                        <Grid Margin="0,0,0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtBrowser" Style="{StaticResource TB}" />
-                            <Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="browser" /></Grid>
-                        <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
-                            <CheckBox x:Name="chkHead" Style="{StaticResource Tog}" /><TextBlock Text="Run Headless" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
-                        <TextBlock Style="{StaticResource Lbl}" Text="TestProject Path" />
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtExe" Style="{StaticResource TB}" />
-                            <Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="exe" /></Grid>
-                    </StackPanel></Border>
+                    <!-- Paths & Browser Card -->
+                    <Border Grid.Column="0" Grid.Row="2" Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Hdr}" Text="Paths &amp; Browser" />
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Browser" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtBrowser" Grid.Column="1" Style="{StaticResource TB}" Grid.ColumnSpan="2" Margin="4,0,68,0" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="10,0,-4,0" Click="Browse_Click" Tag="browser" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="RunHeadless " VerticalAlignment="Top" Margin="0,2,10,0" />
+                                <CheckBox x:Name="chkHead" Grid.Column="1" Style="{StaticResource Tog}" VerticalAlignment="Center" Margin="4,0,371,0" />
+                            </Grid>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Testproj.exe path" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtExe" Grid.Column="1" Style="{StaticResource TB}" Grid.ColumnSpan="2" Margin="4,0,68,0" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="10,0,-4,0" Click="Browse_Click" Tag="exe" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
 
-                    <Border Grid.Column="2" Grid.Row="2" Style="{StaticResource Card}"><StackPanel>
-                        <TextBlock Style="{StaticResource Hdr}" Text="Logging" />
-                        <Grid Margin="0,0,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel><TextBlock Style="{StaticResource Lbl}" Text="Log Level" /><ComboBox x:Name="cmbLog" Style="{StaticResource CB}"><ComboBoxItem Content="DEBUG" IsSelected="True" /><ComboBoxItem Content="INFO" /><ComboBoxItem Content="WARN" /><ComboBoxItem Content="ERROR" /></ComboBox></StackPanel>
-                            <StackPanel Grid.Column="2"><TextBlock Style="{StaticResource Lbl}" Text="Screenshots" /><ComboBox x:Name="cmbSS" Style="{StaticResource CB}"><ComboBoxItem Content="true" IsSelected="True" /><ComboBoxItem Content="false" /></ComboBox></StackPanel></Grid>
-                        <TextBlock Style="{StaticResource Lbl}" Text="Log Output Folder" />
-                        <Grid Margin="0,0,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtLogDir" Style="{StaticResource TB}" /><Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="logdir" /></Grid>
-                        <TextBlock Style="{StaticResource Lbl}" Text="Screenshot Folder" />
-                        <Grid Margin="0,0,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtPicDir" Style="{StaticResource TB}" /><Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="picdir" /></Grid>
-                        <TextBlock Style="{StaticResource Lbl}" Text="Archive Folder" />
-                        <Grid Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtArcDir" Style="{StaticResource TB}" /><Button Grid.Column="1" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="arcdir" /></Grid>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="chkDelLog" Style="{StaticResource Tog}" /><TextBlock Text="Delete old logs" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,24,0" VerticalAlignment="Center" />
-                            <CheckBox x:Name="chkSound" Style="{StaticResource Tog}" /><TextBlock Text="Sound on done" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" /></StackPanel>
-                    </StackPanel></Border>
+                    <!-- Logging Card -->
+                    <Border Grid.Column="2" Grid.Row="2" Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Hdr}" Text="Logging" />
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Log Level" VerticalAlignment="Center" />
+                                <ComboBox x:Name="cmbLog" Grid.Column="1" Style="{StaticResource CB}">
+                                    <ComboBoxItem Content="DEBUG" IsSelected="True" />
+                                    <ComboBoxItem Content="INFO" />
+                                    <ComboBoxItem Content="WARN" />
+                                    <ComboBoxItem Content="ERROR" />
+                                </ComboBox>
+                                <TextBlock Grid.Column="3" Style="{StaticResource Lbl}" Text="Screenshots" VerticalAlignment="Center" />
+                                <ComboBox x:Name="cmbSS" Grid.Column="4" Style="{StaticResource CB}">
+                                    <ComboBoxItem Content="true" IsSelected="True" />
+                                    <ComboBoxItem Content="false" />
+                                </ComboBox>
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Log Folder" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtLogDir" Grid.Column="1" Style="{StaticResource TB}" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="logdir" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Screenshot Folder" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtPicDir" Grid.Column="1" Style="{StaticResource TB}" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="picdir" />
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Archive Folder" VerticalAlignment="Center" />
+                                <TextBox x:Name="txtArcDir" Grid.Column="1" Style="{StaticResource TB}" />
+                                <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="arcdir" />
+                            </Grid>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Lbl}" Text="Options" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <CheckBox x:Name="chkDelLog" Style="{StaticResource Tog}" />
+                                    <TextBlock Text="Delete old logs" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <CheckBox x:Name="chkSound" Style="{StaticResource Tog}" />
+                                    <TextBlock Text="Sound on done" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
 
             <!-- ═══════════════ TESTS ═══════════════ -->
             <TabItem Header="TESTS" Style="{StaticResource TI}">
                 <Grid Margin="20,14,20,20">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="200" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
                     <!-- DLL Picker -->
                     <Border Style="{StaticResource Card}">
-                        <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
                             <TextBlock Text="Assemblies" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" Margin="0,0,0,8" />
-                            <Grid Grid.Row="1" Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                            <Grid Grid.Row="1" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
                                 <Button Content="Scan Folder" Style="{StaticResource BtnP}" HorizontalAlignment="Stretch" Click="BtnScan_Click" Padding="10,6" FontSize="12" />
-                                <Button Grid.Column="1" Content="+" Style="{StaticResource BtnS}" Margin="4,0,0,0" Click="BtnAddDll_Click" Padding="8,5" FontWeight="Bold" /></Grid>
-                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="pnlDlls" /></ScrollViewer>
+                                <Button Grid.Column="1" Content="+" Style="{StaticResource BtnS}" Margin="4,0,0,0" Click="BtnAddDll_Click" Padding="8,5" FontWeight="Bold" />
+                            </Grid>
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                                <StackPanel x:Name="pnlDlls" />
+                            </ScrollViewer>
                             <Button Grid.Row="3" x:Name="btnLoad" Content="Load Selected" Style="{StaticResource BtnP}" Margin="0,8,0,0" Click="BtnLoad_Click" Padding="12,7" FontSize="12" HorizontalAlignment="Stretch" />
                             <TextBlock x:Name="txtDllStat" Grid.Row="4" Margin="0,4,0,0" FontSize="11" Foreground="{StaticResource Fg3}" TextWrapping="Wrap" />
                         </Grid>
@@ -130,7 +326,8 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="txtListTitle" Text="Tests" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" VerticalAlignment="Center" />
                                     <Border x:Name="badgeDll" Visibility="Collapsed" Background="{StaticResource Warn}" CornerRadius="2" Padding="5,1" Margin="8,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Text="DLLs changed" FontSize="10" Foreground="White" /></Border>
+                                        <TextBlock Text="DLLs changed" FontSize="10" Foreground="White" />
+                                    </Border>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Button Content="↻" Style="{StaticResource BtnS}" Click="BtnRefresh_Click" FontSize="14" Padding="5,2" ToolTip="Reload after build" />
@@ -141,7 +338,11 @@
 
                             <!-- Module filter + search -->
                             <Grid Grid.Row="1" Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
                                 <ComboBox x:Name="cmbModule" Style="{StaticResource CB}" Width="180" SelectionChanged="ModuleFilter_Changed">
                                     <ComboBoxItem Content="All Modules" IsSelected="True" />
                                 </ComboBox>
@@ -185,19 +386,38 @@
             <!-- ═══════════════ RESULTS ═══════════════ -->
             <TabItem Header="RESULTS" Style="{StaticResource TI}">
                 <Grid Margin="20,14,20,20">
-                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="10" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
                     <Border Style="{StaticResource Card}" Padding="12">
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <ComboBox x:Name="cmbRuns" Style="{StaticResource CB}" SelectionChanged="CmbRuns_Changed" />
                             <Button Grid.Column="2" Content="Load Runs" Style="{StaticResource BtnP}" Click="BtnLoadRuns_Click" Padding="14,6" FontSize="12" />
                             <Button Grid.Column="4" Content="Open Folder" Style="{StaticResource BtnS}" Click="BtnOpenFolder_Click" />
                         </Grid>
                     </Border>
                     <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="300" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="380" MinWidth="200" /></Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="300" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="380" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
                         <!-- Log tree -->
                         <Border Style="{StaticResource Card}" Padding="0">
-                            <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
                                 <Grid Margin="14,10,14,6">
                                     <TextBlock Text="Execution Log" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" />
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -206,21 +426,38 @@
                                     </StackPanel>
                                 </Grid>
                                 <TreeView x:Name="treeLog" Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="6,0,6,6" SelectedItemChanged="Tree_Selected" VirtualizingStackPanel.IsVirtualizing="False">
-                                    <TreeView.Resources><Style TargetType="TreeViewItem"><Setter Property="Foreground" Value="{StaticResource Fg}" /><Setter Property="FontFamily" Value="Arial" /><Setter Property="FontSize" Value="12" /><Setter Property="Padding" Value="2,2" /><Setter Property="IsExpanded" Value="True" /></Style></TreeView.Resources>
+                                    <TreeView.Resources>
+                                        <Style TargetType="TreeViewItem">
+                                            <Setter Property="Foreground" Value="{StaticResource Fg}" />
+                                            <Setter Property="FontFamily" Value="Arial" />
+                                            <Setter Property="FontSize" Value="12" />
+                                            <Setter Property="Padding" Value="2,2" />
+                                            <Setter Property="IsExpanded" Value="True" />
+                                        </Style>
+                                    </TreeView.Resources>
                                 </TreeView>
                             </Grid>
                         </Border>
                         <GridSplitter Grid.Column="1" Width="8" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Transparent" Cursor="SizeWE" />
                         <!-- Screenshot -->
                         <Border Grid.Column="2" Style="{StaticResource Card}" Padding="0">
-                            <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Grid Margin="14,10,14,6">
                                     <TextBlock Text="Screenshot" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" />
                                     <Button x:Name="btnOpenSS" Content="Open" Style="{StaticResource BtnS}" HorizontalAlignment="Right" Padding="8,3" FontSize="10" Click="BtnOpenSS_Click" Visibility="Collapsed" />
                                 </Grid>
                                 <Border Grid.Row="1" Background="{StaticResource BgPage}" Margin="6,0,6,0" CornerRadius="2" ClipToBounds="True">
-                                    <Grid><TextBlock x:Name="txtNoSS" Text="Select a log entry to preview" Foreground="{StaticResource Fg3}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Padding="16" />
-                                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly"><Image x:Name="imgSS" RenderOptions.BitmapScalingMode="HighQuality" /></Viewbox></Grid>
+                                    <Grid>
+                                        <TextBlock x:Name="txtNoSS" Text="Select a log entry to preview" Foreground="{StaticResource Fg3}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Padding="16" />
+                                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                                            <Image x:Name="imgSS" RenderOptions.BitmapScalingMode="HighQuality" />
+                                        </Viewbox>
+                                    </Grid>
                                 </Border>
                                 <TextBlock x:Name="txtSSPath" Grid.Row="2" Margin="14,4,14,8" FontSize="10" Foreground="{StaticResource Fg3}" TextTrimming="CharacterEllipsis" />
                             </Grid>
