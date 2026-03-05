@@ -128,9 +128,9 @@ namespace TestRunnerApp
             btnLoad.IsEnabled=false;btnLoad.Content="Loading...";string asmDir=Path.GetDirectoryName(txtExe.Text.Trim());
             try{var r=await Task.Run(()=>{
                 var ts=new List<TestInfo>();var mods=new HashSet<string>();var ld=new HashSet<string>();
-                ResolveEventHandler rv=(a,b)=>{if(asmDir==null)return null;var d=Path.Combine(asmDir,new AssemblyName(b.Name).Name+".dll");return File.Exists(d)?Assembly.LoadFrom(d):null;};
+                ResolveEventHandler rv=(a,b)=>{if(asmDir==null)return null;var d=Path.Combine(asmDir,new AssemblyName(b.Name).Name+".dll");return File.Exists(d)?Assembly.Load(File.ReadAllBytes(d)):null;};
                 AppDomain.CurrentDomain.AssemblyResolve+=rv;
-                foreach(var dll in dlls){try{var asm=Assembly.LoadFrom(dll);Type[] types;try{types=asm.GetTypes();}catch(ReflectionTypeLoadException ex){types=ex.Types.Where(t=>t!=null).ToArray();}
+                foreach(var dll in dlls){try{var asm=Assembly.Load(File.ReadAllBytes(dll));Type[] types;try{types=asm.GetTypes();}catch(ReflectionTypeLoadException ex){types=ex.Types.Where(t=>t!=null).ToArray();}
                 string dllShort=Path.GetFileName(dll);
                 foreach(var t in types){if(t==null||!t.IsClass||t.IsAbstract||t.IsInterface||t.Name.StartsWith("<")||t.Name.Contains("__")||t.Name=="ExtendedTestRunner")continue;
                 bool at=false,mt=false,ih=false;
