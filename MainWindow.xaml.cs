@@ -28,6 +28,7 @@ namespace TestRunnerApp
         List<string> _foundDlls = new List<string>();
         HashSet<string> _chkDlls = new HashSet<string>(), _loadedDlls = new HashSet<string>();
         FileSystemWatcher _watcher; CancellationTokenSource _cts; Process _proc; bool _running;
+        DispatcherTimer _autoRefreshTimer;
         // Cached parsed logs per test
         Dictionary<string, List<LogEntry>> _logCache = new Dictionary<string, List<LogEntry>>();
         List<string> _runFiles = new List<string>(); string _ssPath;
@@ -101,7 +102,13 @@ namespace TestRunnerApp
             _foundDlls=Directory.GetFiles(dir,"Tests*.dll").Concat(Directory.GetFiles(dir,"Test*.dll")).Where(f=>!Path.GetFileName(f).Equals("TestStack.White.dll",StringComparison.OrdinalIgnoreCase)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(Path.GetFileName).ToList();
             RefreshDlls();txtDllStat.Text=$"Found {_foundDlls.Count} DLL(s)";txtDllStat.Foreground=cOk;
             _watcher?.Dispose();_watcher=new FileSystemWatcher(dir,"*.dll"){EnableRaisingEvents=true,NotifyFilter=NotifyFilters.LastWrite|NotifyFilters.Size};
-            _watcher.Changed+=(a,b)=>Dispatcher.BeginInvoke(DispatcherPriority.Background,new Action(()=>badgeDll.Visibility=Visibility.Visible));
+            _watcher.Changed+=(a,b)=>Dispatcher.BeginInvoke(DispatcherPriority.Background,new Action(()=>{
+                badgeDll.Visibility=Visibility.Visible;
+                string changed=b.FullPath;
+                if(_loadedDlls.Any(d=>d.Equals(changed,StringComparison.OrdinalIgnoreCase))){
+                    if(_autoRefreshTimer==null){_autoRefreshTimer=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(1500)};_autoRefreshTimer.Tick+=(t,_)=>{_autoRefreshTimer.Stop();if(!_running)BtnRefresh_Click(null,null);};}
+                    _autoRefreshTimer.Stop();_autoRefreshTimer.Start();
+                }}));
         }
         void BtnAddDll_Click(object s,RoutedEventArgs e){var d=new OpenFileDialog{Filter="DLL|*.dll",InitialDirectory=Path.GetDirectoryName(txtExe.Text)??@"C:\"};if(d.ShowDialog()!=true)return;if(!_foundDlls.Any(x=>x.Equals(d.FileName,StringComparison.OrdinalIgnoreCase))){_foundDlls.Add(d.FileName);_chkDlls.Add(d.FileName);RefreshDlls();}}
 
@@ -128,9 +135,9 @@ namespace TestRunnerApp
             btnLoad.IsEnabled=false;btnLoad.Content="Loading...";string asmDir=Path.GetDirectoryName(txtExe.Text.Trim());
             try{var r=await Task.Run(()=>{
                 var ts=new List<TestInfo>();var mods=new HashSet<string>();var ld=new HashSet<string>();
-                ResolveEventHandler rv=(a,b)=>{if(asmDir==null)return null;var d=Path.Combine(asmDir,new AssemblyName(b.Name).Name+".dll");return File.Exists(d)?Assembly.LoadFrom(d):null;};
+                ResolveEventHandler rv=(a,b)=>{if(asmDir==null)return null;var d=Path.Combine(asmDir,new AssemblyName(b.Name).Name+".dll");return File.Exists(d)?Assembly.Load(File.ReadAllBytes(d)):null;};
                 AppDomain.CurrentDomain.AssemblyResolve+=rv;
-                foreach(var dll in dlls){try{var asm=Assembly.LoadFrom(dll);Type[] types;try{types=asm.GetTypes();}catch(ReflectionTypeLoadException ex){types=ex.Types.Where(t=>t!=null).ToArray();}
+                foreach(var dll in dlls){try{var asm=Assembly.Load(File.ReadAllBytes(dll));Type[] types;try{types=asm.GetTypes();}catch(ReflectionTypeLoadException ex){types=ex.Types.Where(t=>t!=null).ToArray();}
                 string dllShort=Path.GetFileName(dll);
                 foreach(var t in types){if(t==null||!t.IsClass||t.IsAbstract||t.IsInterface||t.Name.StartsWith("<")||t.Name.Contains("__")||t.Name=="ExtendedTestRunner")continue;
                 bool at=false,mt=false,ih=false;
