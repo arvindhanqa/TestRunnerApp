@@ -1,6 +1,7 @@
 <Window x:Class="TestRunnerApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:TestRunnerApp"
         Title="QA Test Runner" Width="1200" Height="800" MinWidth="900" MinHeight="600"
         Background="{StaticResource BgPage}" WindowStartupLocation="CenterScreen"
         Closing="Window_Closing">
@@ -465,6 +466,11 @@
                     </Grid>
                 </Grid>
             </TabItem>
+            <!-- ═══════════════ BREAKPOINTS ═══════════════ -->
+            <TabItem Header="BREAKPOINTS" Style="{StaticResource TI}">
+                <local:BreakpointTab x:Name="BreakpointTabControl" />
+            </TabItem>
+            
         </TabControl>
     </Grid>
 </Window>

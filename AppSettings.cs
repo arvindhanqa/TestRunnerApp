@@ -33,8 +33,12 @@ namespace TestRunnerApp
         public bool DeleteOldLogs { get; set; } = true;
         public bool PlaySound { get; set; } = true;
         public List<string> LastLoadedDlls { get; set; } = new List<string>();
+        public string BreakpointSlnPath { get; set; } = "";
+        public string BreakpointLastCsFile { get; set; } = "";
         public double WindowWidth { get; set; } = 1200;
         public double WindowHeight { get; set; } = 800;
+
+
 
         static string FP { get { var d = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QATestRunner"); if (!Directory.Exists(d)) Directory.CreateDirectory(d); return Path.Combine(d, "settings.xml"); } }
         public void Save() { try { var s = new XmlSerializer(typeof(AppSettings)); using (var w = new StreamWriter(FP)) s.Serialize(w, this); } catch { } }

@@ -29,6 +29,7 @@ namespace TestRunnerApp
         HashSet<string> _chkDlls = new HashSet<string>(), _loadedDlls = new HashSet<string>();
         FileSystemWatcher _watcher; CancellationTokenSource _cts; Process _proc; bool _running;
         DispatcherTimer _autoRefreshTimer;
+        string _checkpointCurrentTest = null;
         // Cached parsed logs per test
         Dictionary<string, List<LogEntry>> _logCache = new Dictionary<string, List<LogEntry>>();
         List<string> _runFiles = new List<string>(); string _ssPath;
@@ -45,6 +46,7 @@ namespace TestRunnerApp
             try
             {
                 InitializeComponent();
+                BreakpointTabControl.CheckpointCompleted += OnCheckpointCompleted;
                 S = AppSettings.Load();
                 LoadS();
             }
@@ -406,5 +408,55 @@ namespace TestRunnerApp
             else{txtNoSS.Text=$"Not found:\n{Path.GetFileName(raw)}";txtNoSS.Visibility=Visibility.Visible;imgSS.Source=null;btnOpenSS.Visibility=Visibility.Collapsed;}
         }
         void BtnOpenSS_Click(object s,RoutedEventArgs e){if(_ssPath!=null&&File.Exists(_ssPath))Process.Start(new ProcessStartInfo{FileName=_ssPath,UseShellExecute=true});}
+
+        private void OnCheckpointCompleted(object sender, EventArgs e)
+        {
+            // Fired by BreakpointTab after DB backup + restore is complete.
+            // Marks the checkpointed test then runs the rest of the queue.
+            Dispatcher.InvokeAsync(async () =>
+            {
+                // Mark the test that hit the checkpoint
+                if (_checkpointCurrentTest != null)
+                    UpdateTestStatus(_checkpointCurrentTest, "CHECKPOINT", null, null);
+
+                // Build remaining queue — everything after the checkpointed test
+                var all = GetSelOrdered();
+                int cpIdx = all.FindIndex(t => t.Name == _checkpointCurrentTest);
+                var remaining = (cpIdx >= 0 && cpIdx + 1 < all.Count)
+                    ? all.Skip(cpIdx + 1).ToList()
+                    : new List<TestInfo>();
+
+                _checkpointCurrentTest = null;
+
+                if (remaining.Count == 0)
+                {
+                    txtBadge.Text = "Done — checkpoint reached, no more tests in queue";
+                    btnRun.Visibility = Visibility.Visible;
+                    btnStop.Visibility = Visibility.Collapsed;
+                    _running = false;
+                    _cts = null;
+                    if (chkSound.IsChecked == true)
+                        try { System.Media.SystemSounds.Exclamation.Play(); } catch { }
+                    return;
+                }
+
+                txtBadge.Text = $"[Checkpoint] Resuming — {remaining.Count} test(s) left";
+
+                // Temporarily restrict the selection to the remaining tests only,
+                // then invoke the normal Run button logic (which handles
+                // restore → run → backup → archive for each test).
+                var savedSel = new HashSet<string>(_sel);
+                _sel.Clear();
+                foreach (var t in remaining) _sel.Add(t.Name);
+
+                // Brief pause so the restored DB is fully online before next test
+                await Task.Delay(2000);
+
+                BtnRun_Click(null, null);   // reuses all existing run/backup/archive logic
+
+                // Restore the original selection after run completes
+                _sel = savedSel;
+            });
+        }
     }
 }
