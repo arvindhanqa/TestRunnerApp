@@ -223,6 +223,25 @@ namespace TestRunnerApp
                 };links.Children.Add(l);}
             if(t.LogFile!=null){var p=new TextBlock{Text="📸",FontSize=13,Foreground=cAcc,Cursor=System.Windows.Input.Cursors.Hand,ToolTip="Open screenshots"};
                 string pd=txtPicDir.Text;p.MouseLeftButtonUp+=(a,b)=>{try{Process.Start(new ProcessStartInfo{FileName="explorer.exe",Arguments=pd});}catch{}};links.Children.Add(p);}
+            // 🔴 Breakpoint shortcut icon
+            var bp = new TextBlock
+            {
+                Text = "🔴",
+                FontSize = 13,
+                Foreground = cAcc,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Margin = new Thickness(4, 0, 0, 0),
+                ToolTip = "Open in Breakpoints tab"
+            };
+            string bpName = t.Name;   // capture for lambda
+            bp.MouseLeftButtonUp += (a, b) =>
+            {
+                string csFile = FindTestSourceFile(bpName);
+                if (csFile == null) return;
+                tabs.SelectedIndex = 3;                       // switch to BREAKPOINTS tab
+                BreakpointTabControl.OpenTestFile(csFile);    // load the file + parse tree
+            };
+            links.Children.Add(bp);
 
             g.Children.Add(cb);g.Children.Add(nm);g.Children.Add(mod);g.Children.Add(res);g.Children.Add(dur);g.Children.Add(links);
             bd.Child=g;
@@ -457,6 +476,56 @@ namespace TestRunnerApp
                 // Restore the original selection after run completes
                 _sel = savedSel;
             });
+        }
+
+        private string FindTestSourceFile(string testName)
+        {
+            // Use the .sln folder as the search root
+            string slnPath = AppSettings.Load().BreakpointSlnPath;
+            string root = null;
+
+            if (!string.IsNullOrEmpty(slnPath))
+            {
+                // Walk up from the .sln until we find a folder that contains source
+                // (typically the repo root is one or two levels above the WPF project)
+                root = Path.GetDirectoryName(slnPath);
+                // Try one level up too (common repo layout)
+                string parent = Path.GetDirectoryName(root);
+                if (!string.IsNullOrEmpty(parent) && Directory.Exists(parent))
+                    root = parent;
+            }
+
+            if (string.IsNullOrEmpty(root) || !Directory.Exists(root))
+            {
+                MessageBox.Show(
+                    "Source root not found.\n\nPlease set the .sln path in the Breakpoints tab first.",
+                    "Breakpoints", MessageBoxButton.OK, MessageBoxImage.Information);
+                return null;
+            }
+
+            try
+            {
+                var matches = Directory.GetFiles(root, $"{testName}.cs",
+                                                 SearchOption.AllDirectories);
+                if (matches.Length == 1)
+                    return matches[0];
+
+                if (matches.Length > 1)
+                {
+                    // Multiple matches — pick the one whose path contains "Tests" or "Manufacturing"
+                    var best = matches.FirstOrDefault(f =>
+                        f.IndexOf("Tests", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        f.IndexOf("Manufacturing", StringComparison.OrdinalIgnoreCase) >= 0)
+                        ?? matches[0];
+                    return best;
+                }
+            }
+            catch { }
+
+            MessageBox.Show(
+                $"Could not find {testName}.cs under:\n{root}",
+                "Breakpoints", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return null;
         }
     }
 }

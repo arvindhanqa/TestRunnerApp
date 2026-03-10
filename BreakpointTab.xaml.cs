@@ -124,6 +124,19 @@ namespace TestRunnerApp
             SavePaths();
         }
 
+        /// <summary>
+        /// Called by MainWindow when the user clicks the 🔴 icon on a test row.
+        /// Loads the .cs file directly without showing a file dialog.
+        /// </summary>
+        public void OpenTestFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return;
+            _currentFilePath = filePath;
+            TxtFilePath.Text = filePath;
+            LoadFile(filePath);
+            SavePaths();
+        }
+
         private void BtnReload_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(_currentFilePath))
