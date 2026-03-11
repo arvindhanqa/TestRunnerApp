@@ -195,16 +195,17 @@ namespace TestRunnerApp
             if (_selectedNode == null || string.IsNullOrEmpty(_currentFilePath)) return;
 
             var mode = SelectedMode;
+            string nodeName = _selectedNode.Name; // capture before LoadFile resets _selectedNode
             try
             {
                 TestFileParser.SetBreakpoint(_currentFilePath, _selectedNode, mode);
-                LoadFile(_currentFilePath);
+                LoadFile(_currentFilePath);        // this resets _selectedNode = null
                 UpdateBreakpointStatus(true, mode);
 
                 if (!_buildOutputVisible) ToggleBuildOutput();
 
                 string modeLabel = mode == BreakpointMode.Checkpoint ? "🔖 Checkpoint" : "⏸ Pause";
-                AppendBuildLine($"[Breakpoint] {modeLabel} set at: \"{_selectedNode.Name}\"");
+                AppendBuildLine($"[Breakpoint] {modeLabel} set at: \"{nodeName}\"");
 
                 if (mode == BreakpointMode.Checkpoint)
                 {
@@ -219,7 +220,8 @@ namespace TestRunnerApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to set breakpoint:\n{ex.Message}",
+                MessageBox.Show(
+                    $"Failed to set breakpoint:\n\n{ex.Message}\n\n--- Stack Trace ---\n{ex.StackTrace}",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
