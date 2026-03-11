@@ -10,7 +10,8 @@
         </Style>
 
         <HierarchicalDataTemplate x:Key="NodeTemplate" ItemsSource="{Binding Children}">
-            <TextBlock Text="{Binding DisplayName}" FontSize="12" Margin="2,1"/>
+            <TextBlock Text="{Binding DisplayName}" FontSize="12" Margin="2,1"
+                       Foreground="{DynamicResource Fg}"/>
         </HierarchicalDataTemplate>
     </UserControl.Resources>
 
@@ -49,11 +50,13 @@
                     <TextBlock Grid.Column="0" Text=".sln / .csproj:"
                                VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBox   x:Name="TxtSlnPath" Grid.Column="1"
+                               Style="{StaticResource TB}"
                                VerticalContentAlignment="Center"
                                FontFamily="Consolas" FontSize="11"
                                Height="26" Margin="0,0,4,0" IsReadOnly="True"/>
                     <Button    x:Name="BtnBrowseSln" Grid.Column="2"
                                Content="Browse…" Width="75" Height="26"
+                               Style="{StaticResource BtnS}"
                                Click="BtnBrowseSln_Click"/>
                 </Grid>
 
@@ -67,10 +70,12 @@
                     </Grid.ColumnDefinitions>
                     <Button      x:Name="BtnBuild" Grid.Column="0"
                                  Content="🔨  Build" Width="100" Height="28"
+                                 Style="{StaticResource BtnP}"
                                  Margin="0,0,6,0" IsEnabled="False"
                                  Click="BtnBuild_Click"
                                  ToolTip="Run msbuild on the selected solution/project"/>
                     <ComboBox    x:Name="CmbConfiguration" Grid.Column="1"
+                                 Style="{StaticResource CB}"
                                  Width="90" Height="26" Margin="0,0,6,0"
                                  VerticalContentAlignment="Center" SelectedIndex="0">
                         <ComboBoxItem Content="Debug"/>
@@ -78,10 +83,11 @@
                     </ComboBox>
                     <Button      x:Name="BtnToggleBuildOutput" Grid.Column="2"
                                  Content="▼ Output" Width="80" Height="26"
+                                 Style="{StaticResource BtnS}"
                                  Margin="0,0,6,0" Click="BtnToggleBuildOutput_Click"/>
                     <TextBlock   x:Name="TxtBuildStatus" Grid.Column="3"
                                  VerticalAlignment="Center" FontStyle="Italic"
-                                 Foreground="#666" Text="No build run yet"/>
+                                 Foreground="{DynamicResource Fg3}" Text="No build run yet"/>
                     <ProgressBar x:Name="BuildProgress" Grid.Column="4"
                                  Width="80" Height="14" IsIndeterminate="True"
                                  Visibility="Collapsed" Margin="4,0,0,0"/>
@@ -100,14 +106,17 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox  x:Name="TxtFilePath" Grid.Column="0"
+                          Style="{StaticResource TB}"
                           VerticalContentAlignment="Center"
                           FontFamily="Consolas" FontSize="11"
                           Height="26" Margin="0,0,4,0" IsReadOnly="True"/>
                 <Button   x:Name="BtnBrowse" Grid.Column="1"
                           Content="Browse…" Width="75" Height="26"
+                          Style="{StaticResource BtnS}"
                           Margin="0,0,4,0" Click="BtnBrowse_Click"/>
                 <Button   x:Name="BtnReload" Grid.Column="2"
                           Content="↺ Reload" Width="70" Height="26"
+                          Style="{StaticResource BtnS}"
                           Click="BtnReload_Click"
                           ToolTip="Re-parse the file (use after editing)"/>
             </Grid>
@@ -132,19 +141,22 @@
 
             <!-- Breakpoint mode selector -->
             <Border Grid.Column="0"
-                    BorderBrush="#CCC" BorderThickness="1"
+                    BorderBrush="{DynamicResource Bdr}" BorderThickness="1"
                     CornerRadius="3" Padding="6,4">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Mode:" VerticalAlignment="Center"
+                               Foreground="{DynamicResource Fg}"
                                Margin="0,0,8,0" FontWeight="SemiBold"/>
                     <RadioButton x:Name="RboPause"
                                  Content="⏸  Pause"
                                  IsChecked="True"
+                                 Foreground="{DynamicResource Fg}"
                                  VerticalAlignment="Center"
                                  Margin="0,0,12,0"
                                  ToolTip="Pause test execution and wait for manual Resume"/>
                     <RadioButton x:Name="RboCheckpoint"
                                  Content="🔖  Checkpoint"
+                                 Foreground="{DynamicResource Fg}"
                                  VerticalAlignment="Center"
                                  ToolTip="Stop test, save DB copy, restore DB, auto-start next test"/>
                 </StackPanel>
@@ -152,12 +164,14 @@
 
             <Button x:Name="BtnSetBreakpoint" Grid.Column="2"
                     Content="Set Breakpoint"
+                    Style="{StaticResource BtnS}"
                     Width="130" Height="28"
                     Margin="0,0,6,0" IsEnabled="False"
                     Click="BtnSetBreakpoint_Click"/>
 
             <Button x:Name="BtnClearAll" Grid.Column="3"
                     Content="✖  Clear All"
+                    Style="{StaticResource BtnS}"
                     Width="100" Height="28"
                     Margin="0,0,8,0" IsEnabled="False"
                     Click="BtnClearAll_Click"
@@ -165,7 +179,7 @@
 
             <TextBlock x:Name="TxtBreakpointStatus" Grid.Column="4"
                        VerticalAlignment="Center"
-                       FontStyle="Italic" Foreground="#666"
+                       FontStyle="Italic" Foreground="{DynamicResource Fg3}"
                        Text="No breakpoint set"/>
         </Grid>
 
@@ -187,25 +201,30 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
-                        <Button Content="Expand All"   Width="80" Height="22"
+                        <Button Content="Expand All"   Width="90" Height="22"
+                                Style="{StaticResource BtnS}"
                                 Margin="0,0,4,0" Click="BtnExpandAll_Click"/>
-                        <Button Content="Collapse All" Width="80" Height="22"
+                        <Button Content="Collapse All" Width="90" Height="22"
+                                Style="{StaticResource BtnS}"
                                 Click="BtnCollapseAll_Click"/>
                         <TextBlock x:Name="TxtNodeHint" VerticalAlignment="Center"
-                                   Margin="12,0,0,0" FontStyle="Italic" Foreground="#888"
+                                   Margin="12,0,0,0" FontStyle="Italic" Foreground="{DynamicResource Fg3}"
                                    Text="Select a step or case, then set a breakpoint"/>
                     </StackPanel>
                     <TreeView x:Name="TestTree" Grid.Row="1"
                               ItemTemplate="{StaticResource NodeTemplate}"
                               ItemContainerStyle="{StaticResource NodeItemStyle}"
                               SelectedItemChanged="TestTree_SelectedItemChanged"
-                              BorderBrush="#CCC" FontFamily="Segoe UI" FontSize="12"/>
+                              Background="{DynamicResource CardBg}"
+                              Foreground="{DynamicResource Fg}"
+                              BorderBrush="{DynamicResource Bdr}"
+                              FontFamily="Segoe UI" FontSize="12"/>
 
                 </Grid>
             </GroupBox>
 
             <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"
-                          Background="#CCC" ShowsPreview="True"/>
+                          Background="{DynamicResource Bdr}" ShowsPreview="True"/>
 
             <!-- Build output -->
             <GroupBox Grid.Row="2" Header="Build Output" Padding="4">
@@ -223,6 +242,7 @@
                              BorderThickness="0" Padding="6"/>
                     <Button x:Name="BtnClearBuildOutput" Grid.Row="1"
                             Content="Clear" Width="60" Height="22"
+                            Style="{StaticResource BtnS}"
                             HorizontalAlignment="Right" Margin="0,4,0,0"
                             Click="BtnClearBuildOutput_Click"/>
                 </Grid>
@@ -279,7 +299,7 @@
                     <TextBlock x:Name="TxtCheckpointStep"
                                FontWeight="Bold" FontSize="13"/>
                     <TextBlock x:Name="TxtCheckpointActivity"
-                               FontSize="11" Foreground="#555"
+                               FontSize="11" Foreground="{DynamicResource Fg2}"
                                Margin="0,2,0,0"/>
                 </StackPanel>
 

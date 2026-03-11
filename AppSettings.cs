@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -35,6 +35,7 @@ namespace TestRunnerApp
         public List<string> LastLoadedDlls { get; set; } = new List<string>();
         public string BreakpointSlnPath { get; set; } = "";
         public string BreakpointLastCsFile { get; set; } = "";
+        public bool IsDarkTheme { get; set; } = false;
         public double WindowWidth { get; set; } = 1200;
         public double WindowHeight { get; set; } = 800;
 

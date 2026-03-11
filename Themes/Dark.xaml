@@ -1,0 +1,23 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Navigation -->
+    <SolidColorBrush x:Key="NavBg"       Color="#FF111827" />
+    <!-- Backgrounds -->
+    <SolidColorBrush x:Key="BgPage"      Color="#FF1A1D2E" />
+    <SolidColorBrush x:Key="CardBg"      Color="#FF242638" />
+    <SolidColorBrush x:Key="InputBg"     Color="#FF1E2033" />
+    <SolidColorBrush x:Key="BtnSBg"      Color="#FF242638" />
+    <SolidColorBrush x:Key="DropDownBg"  Color="#FF242638" />
+    <!-- Borders -->
+    <SolidColorBrush x:Key="Bdr"         Color="#FF3A3D52" />
+    <SolidColorBrush x:Key="BdrFocus"    Color="#FF4D9FD4" />
+    <SolidColorBrush x:Key="CardBdr"     Color="#FF3A3D52" />
+    <SolidColorBrush x:Key="DropDownBdr" Color="#FF3A3D52" />
+    <!-- Text -->
+    <SolidColorBrush x:Key="Fg"          Color="#FFE2E4F0" />
+    <SolidColorBrush x:Key="Fg2"         Color="#FFAAB0C8" />
+    <SolidColorBrush x:Key="Fg3"         Color="#FF6B7090" />
+    <!-- Interactive -->
+    <SolidColorBrush x:Key="BtnSHover"   Color="#FF2E3148" />
+    <SolidColorBrush x:Key="TogTrackOff" Color="#FF3A3D52" />
+</ResourceDictionary>

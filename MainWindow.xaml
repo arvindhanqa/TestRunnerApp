@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:TestRunnerApp"
         Title="QA Test Runner" Width="1200" Height="800" MinWidth="900" MinHeight="600"
-        Background="{StaticResource BgPage}" WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BgPage}" WindowStartupLocation="CenterScreen"
         Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
@@ -12,13 +12,18 @@
         </Grid.RowDefinitions>
 
         <!-- HEADER -->
-        <Border Background="{StaticResource NavBg}" Padding="20,8">
+        <Border Background="{DynamicResource NavBg}" Padding="20,8">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="🦇" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center" />
                     <TextBlock Text="QA Test Runner" FontSize="15" Foreground="White" VerticalAlignment="Center" FontWeight="SemiBold" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="btnTheme" Content="🌙"
+                            Style="{StaticResource BtnS}"
+                            Margin="0,0,8,0" Padding="8,4" FontSize="14"
+                            Click="BtnTheme_Click"
+                            ToolTip="Toggle dark / light theme" />
                     <TextBlock x:Name="txtBadge" Text="0 tests selected" FontSize="12" Foreground="#FFAEC6E0" VerticalAlignment="Center" Margin="0,0,20,0" />
                     <Button x:Name="btnRun" Content="Run Tests" Style="{StaticResource BtnP}" Click="BtnRun_Click" />
                     <Button x:Name="btnStop" Content="Stop" Style="{StaticResource BtnS}" Click="BtnStop_Click" Visibility="Collapsed" Margin="8,0,0,0" Foreground="{StaticResource Err}" BorderBrush="{StaticResource Err}" />
@@ -26,7 +31,7 @@
             </Grid>
         </Border>
 
-        <TabControl x:Name="tabs" Grid.Row="1" Style="{StaticResource TC}" Padding="20,0" Background="{StaticResource BgPage}">
+        <TabControl x:Name="tabs" Grid.Row="1" Style="{StaticResource TC}" Padding="20,0" Background="{DynamicResource BgPage}">
 
             <!-- ═══════════════ CONFIGURATION ═══════════════ -->
             <TabItem Header="CONFIGURATION" Style="{StaticResource TI}">
@@ -263,11 +268,11 @@
                                 <TextBlock Style="{StaticResource Lbl}" Text="Options" VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                     <CheckBox x:Name="chkDelLog" Style="{StaticResource Tog}" />
-                                    <TextBlock Text="Delete old logs" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="Delete old logs" Foreground="{DynamicResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
                                     <CheckBox x:Name="chkSound" Style="{StaticResource Tog}" />
-                                    <TextBlock Text="Sound on done" Foreground="{StaticResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="Sound on done" Foreground="{DynamicResource Fg2}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
@@ -294,7 +299,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Assemblies" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" Margin="0,0,0,8" />
+                            <TextBlock Text="Assemblies" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Fg}" Margin="0,0,0,8" />
                             <Grid Grid.Row="1" Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -307,7 +312,7 @@
                                 <StackPanel x:Name="pnlDlls" />
                             </ScrollViewer>
                             <Button Grid.Row="3" x:Name="btnLoad" Content="Load Selected" Style="{StaticResource BtnP}" Margin="0,8,0,0" Click="BtnLoad_Click" Padding="12,7" FontSize="12" HorizontalAlignment="Stretch" />
-                            <TextBlock x:Name="txtDllStat" Grid.Row="4" Margin="0,4,0,0" FontSize="11" Foreground="{StaticResource Fg3}" TextWrapping="Wrap" />
+                            <TextBlock x:Name="txtDllStat" Grid.Row="4" Margin="0,4,0,0" FontSize="11" Foreground="{DynamicResource Fg3}" TextWrapping="Wrap" />
                         </Grid>
                     </Border>
 
@@ -325,7 +330,7 @@
                             <!-- Header row -->
                             <Grid Margin="0,0,0,8">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Name="txtListTitle" Text="Tests" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="txtListTitle" Text="Tests" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Fg}" VerticalAlignment="Center" />
                                     <Border x:Name="badgeDll" Visibility="Collapsed" Background="{StaticResource Warn}" CornerRadius="2" Padding="5,1" Margin="8,0,0,0" VerticalAlignment="Center">
                                         <TextBlock Text="DLLs changed" FontSize="10" Foreground="White" />
                                     </Border>
@@ -360,11 +365,11 @@
                                     <ColumnDefinition Width="70" />
                                     <ColumnDefinition Width="50" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="1" Text="Test Name" Foreground="{StaticResource Fg3}" FontSize="11" Margin="0,0,0,2" />
-                                <TextBlock Grid.Column="2" Text="Module" Foreground="{StaticResource Fg3}" FontSize="11" />
-                                <TextBlock Grid.Column="3" Text="Result" Foreground="{StaticResource Fg3}" FontSize="11" />
-                                <TextBlock Grid.Column="4" Text="Duration" Foreground="{StaticResource Fg3}" FontSize="11" />
-                                <TextBlock Grid.Column="5" Text="Logs" Foreground="{StaticResource Fg3}" FontSize="11" />
+                                <TextBlock Grid.Column="1" Text="Test Name" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="0,0,0,2" />
+                                <TextBlock Grid.Column="2" Text="Module" Foreground="{DynamicResource Fg3}" FontSize="11" />
+                                <TextBlock Grid.Column="3" Text="Result" Foreground="{DynamicResource Fg3}" FontSize="11" />
+                                <TextBlock Grid.Column="4" Text="Duration" Foreground="{DynamicResource Fg3}" FontSize="11" />
+                                <TextBlock Grid.Column="5" Text="Logs" Foreground="{DynamicResource Fg3}" FontSize="11" />
                             </Grid>
 
                             <!-- Test rows -->
@@ -374,11 +379,11 @@
 
                             <!-- Empty state -->
                             <StackPanel x:Name="pnlEmpty" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
-                                <TextBlock Text="No tests loaded" FontSize="16" Foreground="{StaticResource Fg3}" HorizontalAlignment="Center" Margin="0,0,0,8" />
-                                <TextBlock Text="Use the Assemblies panel to scan a folder and load test DLLs" FontSize="12" Foreground="{StaticResource Fg3}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="300" TextAlignment="Center" />
+                                <TextBlock Text="No tests loaded" FontSize="16" Foreground="{DynamicResource Fg3}" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                                <TextBlock Text="Use the Assemblies panel to scan a folder and load test DLLs" FontSize="12" Foreground="{DynamicResource Fg3}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="300" TextAlignment="Center" />
                             </StackPanel>
 
-                            <TextBlock x:Name="txtStat" Grid.Row="4" Margin="0,4,0,0" FontSize="11" Foreground="{StaticResource Fg3}" />
+                            <TextBlock x:Name="txtStat" Grid.Row="4" Margin="0,4,0,0" FontSize="11" Foreground="{DynamicResource Fg3}" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -420,16 +425,16 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid Margin="14,10,14,6">
-                                    <TextBlock Text="Execution Log" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" />
+                                    <TextBlock Text="Execution Log" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Fg}" />
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <TextBlock x:Name="txtResStatus" Text="" FontSize="12" FontWeight="SemiBold" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                        <TextBlock x:Name="txtResDur" Text="" FontSize="12" Foreground="{StaticResource Fg2}" VerticalAlignment="Center" />
+                                        <TextBlock x:Name="txtResDur" Text="" FontSize="12" Foreground="{DynamicResource Fg2}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Grid>
                                 <TreeView x:Name="treeLog" Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="6,0,6,6" SelectedItemChanged="Tree_Selected" VirtualizingStackPanel.IsVirtualizing="False">
                                     <TreeView.Resources>
                                         <Style TargetType="TreeViewItem">
-                                            <Setter Property="Foreground" Value="{StaticResource Fg}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource Fg}" />
                                             <Setter Property="FontFamily" Value="Arial" />
                                             <Setter Property="FontSize" Value="12" />
                                             <Setter Property="Padding" Value="2,2" />
@@ -449,18 +454,18 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid Margin="14,10,14,6">
-                                    <TextBlock Text="Screenshot" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Fg}" />
+                                    <TextBlock Text="Screenshot" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Fg}" />
                                     <Button x:Name="btnOpenSS" Content="Open" Style="{StaticResource BtnS}" HorizontalAlignment="Right" Padding="8,3" FontSize="10" Click="BtnOpenSS_Click" Visibility="Collapsed" />
                                 </Grid>
-                                <Border Grid.Row="1" Background="{StaticResource BgPage}" Margin="6,0,6,0" CornerRadius="2" ClipToBounds="True">
+                                <Border Grid.Row="1" Background="{DynamicResource BgPage}" Margin="6,0,6,0" CornerRadius="2" ClipToBounds="True">
                                     <Grid>
-                                        <TextBlock x:Name="txtNoSS" Text="Select a log entry to preview" Foreground="{StaticResource Fg3}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Padding="16" />
+                                        <TextBlock x:Name="txtNoSS" Text="Select a log entry to preview" Foreground="{DynamicResource Fg3}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Padding="16" />
                                         <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
                                             <Image x:Name="imgSS" RenderOptions.BitmapScalingMode="HighQuality" />
                                         </Viewbox>
                                     </Grid>
                                 </Border>
-                                <TextBlock x:Name="txtSSPath" Grid.Row="2" Margin="14,4,14,8" FontSize="10" Foreground="{StaticResource Fg3}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock x:Name="txtSSPath" Grid.Row="2" Margin="14,4,14,8" FontSize="10" Foreground="{DynamicResource Fg3}" TextTrimming="CharacterEllipsis" />
                             </Grid>
                         </Border>
                     </Grid>

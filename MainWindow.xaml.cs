@@ -35,11 +35,20 @@ namespace TestRunnerApp
         List<string> _runFiles = new List<string>(); string _ssPath;
 
         static SolidColorBrush BR(string h) => new SolidColorBrush((Color)ColorConverter.ConvertFromString(h));
-        static readonly SolidColorBrush cFg=BR("#FF333333"),cFg2=BR("#FF666666"),cFg3=BR("#FF999999"),
-            cAcc=BR("#FF007ACC"),cAccL=BR("#FFB5D7EF"),cBdr=BR("#FFD2D4D7"),
-            cErr=BR("#FFE53935"),cOk=BR("#FF28A745"),cWarn=BR("#FFFFC107"),cMod=BR("#FF007ACC"),
-            cHover=BR("#FFF0F0F0"),cSel=BR("#FFB5D7EF"),cSelBdr=BR("#FF8EC8E8"),
-            cTc=BR("#FF5C6BC0"),cStep=BR("#FF1E88E5"),cOp=BR("#FF78909C"),cSS=BR("#FF26A69A"),cInfo=BR("#FFFB8C00");
+        // ── Fixed brushes (same in both themes) ──────────────────────────────
+        static readonly SolidColorBrush
+            cAcc = BR("#FF007ACC"), cAccL = BR("#FFB5D7EF"),
+            cErr = BR("#FFE53935"), cOk = BR("#FF28A745"), cWarn = BR("#FFFFC107"), cMod = BR("#FF007ACC"),
+            cTc = BR("#FF5C6BC0"), cStep = BR("#FF1E88E5"), cOp = BR("#FF78909C"),
+            cSS = BR("#FF26A69A"), cInfo = BR("#FFFB8C00");
+
+        // ── Theme-sensitive brushes (updated by ApplyTheme) ──────────────────
+        SolidColorBrush cFg = BR("#FF333333"), cFg2 = BR("#FF666666"), cFg3 = BR("#FF999999"),
+            cBdr = BR("#FFD2D4D7"), cHover = BR("#FFF0F0F0"),
+            cSel = BR("#FFB5D7EF"), cSelBdr = BR("#FF8EC8E8"),
+            cCard = BR("#FFFFFFFF");   // unselected row background
+
+        bool _isDark = false;
 
         public MainWindow()
         {
@@ -49,6 +58,9 @@ namespace TestRunnerApp
                 BreakpointTabControl.CheckpointCompleted += OnCheckpointCompleted;
                 S = AppSettings.Load();
                 LoadS();
+                _isDark = S.IsDarkTheme;
+                if (_isDark) ApplyTheme(true);
+                btnTheme.Content = _isDark ? "☀️" : "🌙";
             }
             catch (Exception ex)
             {
@@ -119,14 +131,14 @@ namespace TestRunnerApp
             pnlDlls.Children.Clear();
             foreach(var dp in _foundDlls){string nm=Path.GetFileNameWithoutExtension(dp).Replace("Tests","").Replace("Test","");if(string.IsNullOrEmpty(nm))nm=Path.GetFileNameWithoutExtension(dp);
             bool ck=_chkDlls.Contains(dp),ld=_loadedDlls.Contains(dp);
-            var bd=new Border{Background=ck?cSel:Brushes.White,BorderBrush=ck?cSelBdr:cBdr,BorderThickness=new Thickness(0,0,0,1),Padding=new Thickness(8,5,8,5),Cursor=System.Windows.Input.Cursors.Hand};
+            var bd=new Border{ Background = ck ? cSel : cCard, BorderBrush=ck?cSelBdr:cBdr,BorderThickness=new Thickness(0,0,0,1),Padding=new Thickness(8,5,8,5),Cursor=System.Windows.Input.Cursors.Hand};
             var st=new StackPanel{Orientation=Orientation.Horizontal};
             st.Children.Add(new CheckBox{IsChecked=ck,IsHitTestVisible=false,VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(0,0,6,0)});
             st.Children.Add(new TextBlock{Text=nm,Foreground=cFg,FontSize=12,VerticalAlignment=VerticalAlignment.Center});
             if(ld)st.Children.Add(new TextBlock{Text=" ✓",Foreground=cOk,FontSize=10,VerticalAlignment=VerticalAlignment.Center});
             bd.Child=st;string p=dp;
             bd.MouseLeftButtonUp+=(a,b)=>{if(_chkDlls.Contains(p))_chkDlls.Remove(p);else _chkDlls.Add(p);RefreshDlls();};
-            bd.MouseEnter+=(a,b)=>{if(!_chkDlls.Contains(p))bd.Background=cHover;};bd.MouseLeave+=(a,b)=>{bd.Background=_chkDlls.Contains(p)?cSel:Brushes.White;};
+            bd.MouseEnter+=(a,b)=>{if(!_chkDlls.Contains(p))bd.Background=cHover;};bd.MouseLeave+=(a,b)=>{ bd.Background = _chkDlls.Contains(p) ? cSel : cCard; };
             pnlDlls.Children.Add(bd);}
         }
 
@@ -193,7 +205,7 @@ namespace TestRunnerApp
         Border MkRow(TestInfo t)
         {
             bool s=_sel.Contains(t.Name);
-            var bd=new Border{Background=s?cSel:Brushes.White,BorderBrush=cBdr,BorderThickness=new Thickness(0,0,0,0.5),Padding=new Thickness(4,5,4,5),Cursor=System.Windows.Input.Cursors.Hand};
+            var bd=new Border{ Background = s ? cSel : cCard, BorderBrush=cBdr,BorderThickness=new Thickness(0,0,0,0.5),Padding=new Thickness(4,5,4,5),Cursor=System.Windows.Input.Cursors.Hand};
             var g=new Grid();
             g.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(30)});  // checkbox
             g.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(1,GridUnitType.Star)}); // name
@@ -249,7 +261,7 @@ namespace TestRunnerApp
             string name=t.Name;
             bd.MouseLeftButtonUp+=(a,e)=>{if(_sel.Contains(name))_sel.Remove(name);else _sel.Add(name);RefreshTests();UpdateBadge();};
             bd.MouseEnter+=(a,e)=>{if(!_sel.Contains(name))bd.Background=cHover;};
-            bd.MouseLeave+=(a,e)=>{bd.Background=_sel.Contains(name)?cSel:Brushes.White;};
+            bd.MouseLeave+=(a,e)=>{ bd.Background = _sel.Contains(name) ? cSel : cCard; };
             return bd;
         }
 
@@ -526,6 +538,53 @@ namespace TestRunnerApp
                 $"Could not find {testName}.cs under:\n{root}",
                 "Breakpoints", MessageBoxButton.OK, MessageBoxImage.Warning);
             return null;
+        }
+        void ApplyTheme(bool dark)
+        {
+            _isDark = dark;
+
+            // Swap theme resource dictionary
+            var dicts = Application.Current.Resources.MergedDictionaries;
+            var old = dicts.FirstOrDefault(d =>
+                d.Source != null && (
+                    d.Source.OriginalString.Contains("Light.xaml") ||
+                    d.Source.OriginalString.Contains("Dark.xaml")));
+            if (old != null) dicts.Remove(old);
+
+            dicts.Add(new ResourceDictionary
+            {
+                Source = new Uri(dark
+                    ? "pack://application:,,,/TestRunnerApp;component/Themes/Dark.xaml"
+                    : "pack://application:,,,/TestRunnerApp;component/Themes/Light.xaml")
+            });
+
+            // Update code-behind brushes used in MkRow / RefreshDlls
+            if (dark)
+            {
+                cFg = BR("#FFE2E4F0"); cFg2 = BR("#FFAAB0C8"); cFg3 = BR("#FF6B7090");
+                cBdr = BR("#FF3A3D52"); cHover = BR("#FF2E3148");
+                cSel = BR("#FF1E3A52"); cSelBdr = BR("#FF2E5A7A");
+                cCard = BR("#FF242638");
+            }
+            else
+            {
+                cFg = BR("#FF333333"); cFg2 = BR("#FF666666"); cFg3 = BR("#FF999999");
+                cBdr = BR("#FFD2D4D7"); cHover = BR("#FFF0F0F0");
+                cSel = BR("#FFB5D7EF"); cSelBdr = BR("#FF8EC8E8");
+                cCard = BR("#FFFFFFFF");
+            }
+
+            RefreshTests();
+            RefreshDlls();
+
+            S.IsDarkTheme = dark;
+            SaveS();
+        }
+
+        void BtnTheme_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyTheme(!_isDark);
+            btnTheme.Content = _isDark ? "☀️" : "🌙";
         }
     }
 }
