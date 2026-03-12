@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:TestRunnerApp"
-        Title="QA Test Runner" Width="1200" Height="800" MinWidth="900" MinHeight="600"
+        Title="Local Test Portal" Width="1200" Height="800" MinWidth="900" MinHeight="600"
         Background="{DynamicResource BgPage}" WindowStartupLocation="CenterScreen"
         Closing="Window_Closing">
     <Grid>
@@ -15,8 +15,14 @@
         <Border Background="{DynamicResource NavBg}" Padding="20,8">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🦇" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center" />
-                    <TextBlock Text="QA Test Runner" FontSize="15" Foreground="White" VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <Image Source="portal-logo.png"
+                           Width="28" Height="28"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="Local Test Portal"
+                               FontSize="15" Foreground="White"
+                               VerticalAlignment="Center" FontWeight="SemiBold" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Button x:Name="btnTheme" Content="🌙"

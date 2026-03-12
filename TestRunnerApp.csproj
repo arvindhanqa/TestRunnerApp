@@ -12,7 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
-    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationIcon>portal-logo.ico</ApplicationIcon>
+    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -81,8 +82,8 @@
     <Compile Include="TestFileParser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="app.ico" />
-    <Resource Include="bat-logo.png" />
+    <Resource Include="portal-logo.png" />
+    <Resource Include="portal-logo.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
