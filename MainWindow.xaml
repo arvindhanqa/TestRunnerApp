@@ -345,6 +345,7 @@
                                     <Button Content="↻" Style="{StaticResource BtnS}" Click="BtnRefresh_Click" FontSize="14" Padding="5,2" ToolTip="Reload after build" />
                                     <Button Content="All" Style="{StaticResource BtnS}" Margin="4,0,0,0" Click="BtnSelAll_Click" Padding="8,3" FontSize="11" />
                                     <Button Content="None" Style="{StaticResource BtnS}" Margin="4,0,0,0" Click="BtnSelNone_Click" Padding="8,3" FontSize="11" />
+                                    <Button x:Name="btnSelFilter" Content="Selected" Style="{StaticResource BtnS}" Margin="4,0,0,0" Click="BtnSelFilter_Click" Padding="8,3" FontSize="11" ToolTip="Show only selected tests" />
                                 </StackPanel>
                             </Grid>
 
@@ -481,7 +482,123 @@
             <TabItem Header="BREAKPOINTS" Style="{StaticResource TI}">
                 <local:BreakpointTab x:Name="BreakpointTabControl" />
             </TabItem>
-            
+
+            <!-- ═══════════════ LINKS ═══════════════ -->
+            <TabItem Header="LINKS" Style="{StaticResource TI}">
+                <Grid Margin="30,24,30,24">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- GROUP 1: Environments -->
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="Environments"
+                                   FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Fg3}"
+                                   Margin="0,0,0,10"
+                                   TextDecorations="Underline"/>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Button Tag="https://deploy.acumatica.com/"
+                                    Click="BtnLink_Click"
+                                    Style="{StaticResource LinkCard}"
+                                    Margin="0,0,10,0">
+                                <StackPanel>
+                                    <TextBlock Text="🚀" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Acumatica Deploy" FontSize="13" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg}"/>
+                                    <TextBlock Text="deploy.acumatica.com" FontSize="10"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg3}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Tag="https://testportal.acumatica.com/"
+                                    Click="BtnLink_Click"
+                                    Style="{StaticResource LinkCard}">
+                                <StackPanel>
+                                    <TextBlock Text="🧪" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Acumatica Test Portal" FontSize="13" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg}"/>
+                                    <TextBlock Text="testportal.acumatica.com" FontSize="10"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg3}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </UniformGrid>
+                    </StackPanel>
+
+                    <!-- GROUP 2: Development -->
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="Development"
+                                   FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Fg3}"
+                                   Margin="0,0,0,10"
+                                   TextDecorations="Underline"/>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Button Tag="https://jira.acumatica.com/"
+                                    Click="BtnLink_Click"
+                                    Style="{StaticResource LinkCard}"
+                                    Margin="0,0,10,0">
+                                <StackPanel>
+                                    <TextBlock Text="📋" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Acumatica Jira" FontSize="13" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg}"/>
+                                    <TextBlock Text="jira.acumatica.com" FontSize="10"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg3}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Tag="https://bitbucket.acumatica.com/dashboard"
+                                    Click="BtnLink_Click"
+                                    Style="{StaticResource LinkCard}">
+                                <StackPanel>
+                                    <TextBlock Text="🔀" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Acumatica Bitbucket" FontSize="13" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg}"/>
+                                    <TextBlock Text="bitbucket.acumatica.com" FontSize="10"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg3}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </UniformGrid>
+                    </StackPanel>
+
+                    <!-- GROUP 3: Documentation -->
+                    <StackPanel Grid.Row="4">
+                        <TextBlock Text="Documentation"
+                                   FontSize="11" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Fg3}"
+                                   Margin="0,0,0,10"
+                                   TextDecorations="Underline"/>
+                        <UniformGrid Columns="2" Rows="1">
+                            <Button Tag="https://wiki.acumatica.com/"
+                                    Click="BtnLink_Click"
+                                    Style="{StaticResource LinkCard}"
+                                    Margin="0,0,10,0">
+                                <StackPanel>
+                                    <TextBlock Text="📖" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Acumatica Wiki" FontSize="13" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg}"/>
+                                    <TextBlock Text="wiki.acumatica.com" FontSize="10"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg3}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Tag="https://help.acumatica.com/"
+                                    Click="BtnLink_Click"
+                                    Style="{StaticResource LinkCard}">
+                                <StackPanel>
+                                    <TextBlock Text="❓" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Acumatica Help" FontSize="13" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg}"/>
+                                    <TextBlock Text="help.acumatica.com" FontSize="10"
+                                               HorizontalAlignment="Center" Foreground="{DynamicResource Fg3}" Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </UniformGrid>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+
         </TabControl>
     </Grid>
 </Window>

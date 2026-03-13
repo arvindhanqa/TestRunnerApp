@@ -308,6 +308,40 @@
                 <Setter Property="Padding"         Value="4" />
             </Style>
 
+            <!-- Link Card Button — used in the LINKS tab -->
+            <Style x:Key="LinkCard" TargetType="Button">
+                <Setter Property="Background"      Value="{DynamicResource CardBg}" />
+                <Setter Property="BorderBrush"     Value="{DynamicResource CardBdr}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Cursor"          Value="Hand" />
+                <Setter Property="Padding"         Value="20,18" />
+                <Setter Property="Margin"          Value="0,0,0,0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="12"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource Acc}"/>
+                                    <Setter TargetName="bd" Property="Background"  Value="{DynamicResource BtnSHover}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

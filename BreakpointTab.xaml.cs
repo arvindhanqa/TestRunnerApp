@@ -63,12 +63,25 @@ namespace TestRunnerApp
             try
             {
                 var s = AppSettings.Load();
-                if (!string.IsNullOrEmpty(s.BreakpointSlnPath))
+                if (!string.IsNullOrEmpty(s.BreakpointSlnPath) && File.Exists(s.BreakpointSlnPath))
                 {
                     _slnPath = s.BreakpointSlnPath;
                     TxtSlnPath.Text = _slnPath;
                     BtnBuild.IsEnabled = true;
                 }
+                else
+                {
+                    // Auto-discover by walking up the directory tree from TestProject.exe
+                    string found = AutoFindSln(s.TestExePath);
+                    if (!string.IsNullOrEmpty(found))
+                    {
+                        _slnPath = found;
+                        TxtSlnPath.Text = _slnPath;
+                        BtnBuild.IsEnabled = true;
+                        SavePaths(); // persist so we don't search again next launch
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(s.BreakpointLastCsFile)
                     && File.Exists(s.BreakpointLastCsFile))
                 {
@@ -78,6 +91,30 @@ namespace TestRunnerApp
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Walks up the directory tree from the TestProject.exe location
+        /// looking for the first .sln file. Stops at the drive root.
+        /// </summary>
+        private static string AutoFindSln(string exePath)
+        {
+            if (string.IsNullOrEmpty(exePath)) return null;
+            try
+            {
+                string dir = Path.GetDirectoryName(exePath);
+                while (!string.IsNullOrEmpty(dir))
+                {
+                    var slns = Directory.GetFiles(dir, "*.sln");
+                    if (slns.Length > 0) return slns[0];
+
+                    string parent = Path.GetDirectoryName(dir);
+                    if (parent == dir) break; // reached drive root
+                    dir = parent;
+                }
+            }
+            catch { }
+            return null;
         }
 
         private void SavePaths()
