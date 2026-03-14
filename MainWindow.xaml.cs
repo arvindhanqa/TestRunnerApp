@@ -17,7 +17,7 @@ using Microsoft.Win32;
 namespace TestRunnerApp
 {
     public class LogEntry { public string Time, Type, Message, ScreenshotPath; public int Depth; public bool IsError; public List<LogEntry> Children = new List<LogEntry>(); }
-    public class TestInfo { public string Name, Dll, Module, Desc, Status = "Not Run", Duration, LogFile; public bool Failed; }
+    public class TestInfo { public string Name, Dll, Module, Desc, Status = "Not Run", Duration, LogFile, LastBackupPath; public bool Failed; }
 
     public partial class MainWindow : Window
     {
@@ -238,31 +238,90 @@ namespace TestRunnerApp
             bool s = _sel.Contains(t.Name);
             var bd = new Border { Background = s ? cSel : cCard, BorderBrush = cBdr, BorderThickness = new Thickness(0, 0, 0, 0.5), Padding = new Thickness(4, 5, 4, 5), Cursor = System.Windows.Input.Cursors.Hand };
             var g = new Grid();
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });  // checkbox
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // name
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) }); // module
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) }); // result
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });  // duration
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });  // logs
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });   // 0: checkbox
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(420) });  // 1: name
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });  // 2: module
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });   // 3: set breakpoint
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // 4: last archive
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });  // 5: result
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(65) });   // 6: duration
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });   // 7: logs
 
-            var cb = new CheckBox { IsChecked = s, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center }; Grid.SetColumn(cb, 0);
-            var nm = new TextBlock { Text = t.Name, Foreground = cFg, FontSize = 13, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis }; Grid.SetColumn(nm, 1);
-            var mod = new TextBlock { Text = t.Module ?? "", Foreground = cMod, FontSize = 11, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center }; Grid.SetColumn(mod, 2);
+            // ── Cells (all with trimming + tooltip + inner margins) ──
+            var cb = new CheckBox { IsChecked = s, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(cb, 0);
 
-            // Result
+            var nm = new TextBlock { Text = t.Name, Foreground = cFg, FontSize = 13, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(0, 0, 6, 0) };
+            if (!string.IsNullOrEmpty(t.Name)) nm.ToolTip = t.Name;
+            Grid.SetColumn(nm, 1);
+
+            var mod = new TextBlock { Text = t.Module ?? "", Foreground = cMod, FontSize = 11, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(6, 0, 6, 0) };
+            if (!string.IsNullOrEmpty(t.Module)) mod.ToolTip = t.Module;
+            Grid.SetColumn(mod, 2);
+
+            // "Set" breakpoint hyperlink (col 3)
+            var bp = new TextBlock
+            {
+                Text = "Set",
+                FontSize = 11,
+                Foreground = cAcc,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextDecorations = TextDecorations.Underline,
+                Margin = new Thickness(6, 0, 6, 0),
+                ToolTip = "Open in Breakpoints tab"
+            };
+            Grid.SetColumn(bp, 3);
+            string bpName = t.Name;
+            bp.MouseLeftButtonUp += (a, b) =>
+            {
+                string csFile = FindTestSourceFile(bpName);
+                if (csFile == null) return;
+                tabs.SelectedIndex = 3;
+                BreakpointTabControl.OpenTestFile(csFile);
+            };
+
+            // Last Archive (col 4)
+            bool hasArchive = !string.IsNullOrEmpty(t.LastBackupPath);
+            var arc = new TextBlock
+            {
+                Text = hasArchive ? Path.GetFileName(t.LastBackupPath) : "—",
+                Foreground = hasArchive ? cAcc : cFg3,
+                FontSize = 11,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                Margin = new Thickness(6, 0, 6, 0),
+                ToolTip = hasArchive ? t.LastBackupPath : null,
+                Cursor = hasArchive ? System.Windows.Input.Cursors.Hand : System.Windows.Input.Cursors.Arrow
+            };
+            Grid.SetColumn(arc, 4);
+            if (hasArchive)
+            {
+                string arcPath = t.LastBackupPath;
+                arc.MouseLeftButtonUp += (a, b) =>
+                {
+                    try { Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = arcPath }); } catch { }
+                };
+            }
+
+            // Result (col 5)
             var resFg = t.Status == "PASSED" ? cOk : t.Status == "FAILED" ? cErr : t.Status == "Running..." || t.Status == "Restoring..." ? cAcc : cFg3;
-            var res = new TextBlock { Text = t.Status, Foreground = resFg, FontSize = 12, FontWeight = t.Status == "Not Run" ? FontWeights.Normal : FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center }; Grid.SetColumn(res, 3);
+            var res = new TextBlock { Text = t.Status, Foreground = resFg, FontSize = 12, FontWeight = t.Status == "Not Run" ? FontWeights.Normal : FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(6, 0, 6, 0) };
+            if (!string.IsNullOrEmpty(t.Status) && t.Status != "Not Run") res.ToolTip = t.Status;
+            Grid.SetColumn(res, 5);
 
-            var dur = new TextBlock { Text = t.Duration ?? "", Foreground = cFg2, FontSize = 11, VerticalAlignment = VerticalAlignment.Center }; Grid.SetColumn(dur, 4);
+            var dur = new TextBlock { Text = t.Duration ?? "", Foreground = cFg2, FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(6, 0, 6, 0) };
+            if (!string.IsNullOrEmpty(t.Duration)) dur.ToolTip = t.Duration;
+            Grid.SetColumn(dur, 6);
 
-            // Log/pic links
-            var links = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center }; Grid.SetColumn(links, 5);
+            // Log/pic links (col 7)
+            var links = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 0, 0) };
+            Grid.SetColumn(links, 7);
             if (t.LogFile != null && File.Exists(t.LogFile))
             {
                 var l = new TextBlock { Text = "📄", FontSize = 13, Foreground = cAcc, Cursor = System.Windows.Input.Cursors.Hand, Margin = new Thickness(0, 0, 4, 0), ToolTip = "View log" };
                 string lp = t.LogFile; string tn = t.Name;
                 l.MouseLeftButtonUp += (a, b) => {
-                    // Switch to Results tab with cached log
                     if (_logCache.ContainsKey(tn)) ShowCachedLog(tn);
                     else { try { Process.Start(new ProcessStartInfo { FileName = lp, UseShellExecute = true }); } catch { } }
                 }; links.Children.Add(l);
@@ -272,31 +331,33 @@ namespace TestRunnerApp
                 var p = new TextBlock { Text = "📸", FontSize = 13, Foreground = cAcc, Cursor = System.Windows.Input.Cursors.Hand, ToolTip = "Open screenshots" };
                 string pd = txtPicDir.Text; p.MouseLeftButtonUp += (a, b) => { try { Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = pd }); } catch { } }; links.Children.Add(p);
             }
-            // 🔴 Breakpoint shortcut icon
-            var bp = new TextBlock
-            {
-                Text = "🔴",
-                FontSize = 13,
-                Foreground = cAcc,
-                Cursor = System.Windows.Input.Cursors.Hand,
-                Margin = new Thickness(4, 0, 0, 0),
-                ToolTip = "Open in Breakpoints tab"
-            };
-            string bpName = t.Name;   // capture for lambda
-            bp.MouseLeftButtonUp += (a, b) =>
-            {
-                string csFile = FindTestSourceFile(bpName);
-                if (csFile == null) return;
-                tabs.SelectedIndex = 3;                       // switch to BREAKPOINTS tab
-                BreakpointTabControl.OpenTestFile(csFile);    // load the file + parse tree
-            };
-            links.Children.Add(bp);
 
-            g.Children.Add(cb); g.Children.Add(nm); g.Children.Add(mod); g.Children.Add(res); g.Children.Add(dur); g.Children.Add(links);
+            // ── Add cells ──
+            g.Children.Add(cb); g.Children.Add(nm); g.Children.Add(mod); g.Children.Add(bp); g.Children.Add(arc); g.Children.Add(res); g.Children.Add(dur); g.Children.Add(links);
+
+            // ── Vertical separators (1px line at right edge of cols 1–6) ──
+            for (int c = 1; c <= 6; c++)
+            {
+                var sep = new Border { Width = 1, Background = cBdr, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Stretch };
+                Grid.SetColumn(sep, c);
+                g.Children.Add(sep);
+            }
+
             bd.Child = g;
             if (!string.IsNullOrEmpty(t.Desc)) bd.ToolTip = new ToolTip { Content = t.Desc, MaxWidth = 500, FontSize = 12 };
             string name = t.Name;
-            bd.MouseLeftButtonUp += (a, e) => { if (_sel.Contains(name)) _sel.Remove(name); else _sel.Add(name); RefreshTests(); UpdateBadge(); };
+            bd.MouseLeftButtonUp += (a, e) => {
+                if (_sel.Contains(name)) _sel.Remove(name); else _sel.Add(name);
+                bool nowSel = _sel.Contains(name);
+                if (_showSelectedOnly && !nowSel)
+                    RefreshTests();
+                else
+                {
+                    bd.Background = nowSel ? cSel : cCard;
+                    cb.IsChecked = nowSel;
+                }
+                UpdateBadge();
+            };
             bd.MouseEnter += (a, e) => { if (!_sel.Contains(name)) bd.Background = cHover; };
             bd.MouseLeave += (a, e) => { bd.Background = _sel.Contains(name) ? cSel : cCard; };
             return bd;
@@ -324,7 +385,7 @@ namespace TestRunnerApp
         void KillTree(Process p) { if (p == null || p.HasExited) return; try { Process.Start(new ProcessStartInfo("taskkill", $"/T /F /PID {p.Id}") { UseShellExecute = false, CreateNoWindow = true })?.WaitForExit(5000); } catch { try { p.Kill(); } catch { } } }
         async Task RestoreDb(string bak, CancellationToken ct) { await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"ALTER DATABASE [{txtDb.Text}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\"", ct); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"RESTORE DATABASE [{txtDb.Text}] FROM DISK = N'{bak}' WITH FILE = 1, NOUNLOAD, REPLACE, STATS = 5\"", ct); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"ALTER DATABASE [{txtDb.Text}] SET MULTI_USER\"", ct); }
         async Task BackupDb(string t, CancellationToken ct) { string n = $"{t}_{txtDb.Text}_{txtVer.Text}_{DateTime.Now:yyyyMMdd_HHmmss}"; foreach (var c in Path.GetInvalidFileNameChars()) n = n.Replace(c, '_'); string d = txtBakOut.Text.Trim(); if (!Directory.Exists(d)) Directory.CreateDirectory(d); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"BACKUP DATABASE [{txtDb.Text}] TO DISK = N'{Path.Combine(d, n + ".bak")}' WITH FORMAT, INIT, NAME = N'{n}'\"", ct); }
-        void ArchiveLogs(string t) { string a = txtArcDir.Text.Trim(); if (string.IsNullOrEmpty(a)) return; string f = Path.Combine(a, $"{t}_{txtVer.Text.Replace(".", "_")}_{DateTime.Now:yyyyMMdd_HHmmss}"); try { Directory.CreateDirectory(Path.Combine(f, "logs")); Directory.CreateDirectory(Path.Combine(f, "pics")); if (Directory.Exists(txtLogDir.Text)) foreach (var x in Directory.GetFiles(txtLogDir.Text)) File.Copy(x, Path.Combine(f, "logs", Path.GetFileName(x)), true); if (Directory.Exists(txtPicDir.Text)) foreach (var x in Directory.GetFiles(txtPicDir.Text)) File.Copy(x, Path.Combine(f, "pics", Path.GetFileName(x)), true); } catch { } }
+        string ArchiveLogs(string t) { string a = txtArcDir.Text.Trim(); if (string.IsNullOrEmpty(a)) return null; string f = Path.Combine(a, $"{t}_{txtVer.Text.Replace(".", "_")}_{DateTime.Now:yyyyMMdd_HHmmss}"); try { Directory.CreateDirectory(Path.Combine(f, "logs")); Directory.CreateDirectory(Path.Combine(f, "pics")); if (Directory.Exists(txtLogDir.Text)) foreach (var x in Directory.GetFiles(txtLogDir.Text)) File.Copy(x, Path.Combine(f, "logs", Path.GetFileName(x)), true); if (Directory.Exists(txtPicDir.Text)) foreach (var x in Directory.GetFiles(txtPicDir.Text)) File.Copy(x, Path.Combine(f, "pics", Path.GetFileName(x)), true); return f; } catch { return null; } }
         string FindLog(string t) { try { return Directory.GetFiles(txtLogDir.Text, $"{t}_*").OrderByDescending(File.GetLastWriteTime).FirstOrDefault(); } catch { return null; } }
         bool CheckFailed(string t) { var l = FindLog(t); if (l == null) try { l = Directory.GetFiles(txtLogDir.Text, "Log_*").OrderByDescending(File.GetLastWriteTime).FirstOrDefault(); } catch { } if (l != null) try { return File.ReadAllText(l).Contains("Error :"); } catch { } return false; }
 
@@ -380,7 +441,12 @@ namespace TestRunnerApp
                     if (doBak) { UpdateTestStatus(test.Name, f ? "FAILED — saving DB..." : "PASSED — saving DB...", dur, logFile); try { await BackupDb(test.Name, _cts.Token); } catch { } }
 
                     // 5. Archive
-                    ArchiveLogs(test.Name);
+                    string archivePath = ArchiveLogs(test.Name);
+                    if (!string.IsNullOrEmpty(archivePath))
+                    {
+                        var ti2 = _tests.FirstOrDefault(x => x.Name == test.Name);
+                        if (ti2 != null) ti2.LastBackupPath = archivePath;
+                    }
 
                     // 6. Cache log parse in background
                     if (logFile != null && File.Exists(logFile))
