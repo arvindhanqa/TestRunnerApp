@@ -30,9 +30,12 @@ namespace TestRunnerApp
         FileSystemWatcher _watcher; CancellationTokenSource _cts; Process _proc; bool _running;
         DispatcherTimer _autoRefreshTimer;
         bool _showSelectedOnly = false;
+        bool _deferRefresh = false; // when true, BtnLoad_Click skips its own RefreshTests
         string _checkpointCurrentTest = null;
         // Cached parsed logs per test
         Dictionary<string, List<LogEntry>> _logCache = new Dictionary<string, List<LogEntry>>();
+        // DLL write times — used to skip auto-refresh when DLL hasn't actually changed
+        Dictionary<string, DateTime> _dllWriteTimes = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
         List<string> _runFiles = new List<string>(); string _ssPath;
 
         static SolidColorBrush BR(string h) => new SolidColorBrush((Color)ColorConverter.ConvertFromString(h));
@@ -123,13 +126,15 @@ namespace TestRunnerApp
             RefreshDlls(); txtDllStat.Text = $"Found {_foundDlls.Count} DLL(s)"; txtDllStat.Foreground = cOk;
             _watcher?.Dispose(); _watcher = new FileSystemWatcher(dir, "*.dll") { EnableRaisingEvents = true, NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size };
             _watcher.Changed += (a, b) => Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-                badgeDll.Visibility = Visibility.Visible;
                 string changed = b.FullPath;
-                if (_loadedDlls.Any(d => d.Equals(changed, StringComparison.OrdinalIgnoreCase)))
-                {
-                    if (_autoRefreshTimer == null) { _autoRefreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) }; _autoRefreshTimer.Tick += (t, _) => { _autoRefreshTimer.Stop(); if (!_running) BtnRefresh_Click(null, null); }; }
-                    _autoRefreshTimer.Stop(); _autoRefreshTimer.Start();
-                }
+                if (!_loadedDlls.Any(d => d.Equals(changed, StringComparison.OrdinalIgnoreCase))) return;
+                // Check if DLL actually has a newer write time
+                DateTime newTime;
+                try { newTime = File.GetLastWriteTimeUtc(changed); } catch { return; }
+                if (_dllWriteTimes.TryGetValue(changed, out var oldTime) && newTime <= oldTime) return;
+                badgeDll.Visibility = Visibility.Visible;
+                if (_autoRefreshTimer == null) { _autoRefreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) }; _autoRefreshTimer.Tick += (t, _) => { _autoRefreshTimer.Stop(); if (!_running) BtnRefresh_Click(null, null); }; }
+                _autoRefreshTimer.Stop(); _autoRefreshTimer.Start();
             }));
         }
         void BtnAddDll_Click(object s, RoutedEventArgs e) { var d = new OpenFileDialog { Filter = "DLL|*.dll", InitialDirectory = Path.GetDirectoryName(txtExe.Text) ?? @"C:\" }; if (d.ShowDialog() != true) return; if (!_foundDlls.Any(x => x.Equals(d.FileName, StringComparison.OrdinalIgnoreCase))) { _foundDlls.Add(d.FileName); _chkDlls.Add(d.FileName); RefreshDlls(); } }
@@ -197,11 +202,17 @@ namespace TestRunnerApp
                 });
 
                 _tests = r.Tests; _modules = r.Modules; _loadedDlls = r.Loaded; badgeDll.Visibility = Visibility.Collapsed;
+                // Record DLL write times so the watcher can skip unchanged DLLs
+                _dllWriteTimes.Clear();
+                foreach (var dll in r.Loaded)
+                    try { _dllWriteTimes[dll] = File.GetLastWriteTimeUtc(dll); } catch { }
                 // Populate module filter
                 cmbModule.Items.Clear(); cmbModule.Items.Add(new ComboBoxItem { Content = "All Modules", IsSelected = true });
                 foreach (var m in _modules) cmbModule.Items.Add(new ComboBoxItem { Content = m });
                 cmbModule.SelectedIndex = 0;
-                RefreshTests(); RefreshDlls(); UpdateBadge();
+                if (!_deferRefresh) { RefreshTests(); UpdateBadge(); }
+                _deferRefresh = false;
+                RefreshDlls();
                 txtDllStat.Text = $"{_tests.Count} tests from {r.Loaded.Count} DLL(s)"; txtDllStat.Foreground = cOk;
                 txtListTitle.Text = $"Tests ({_tests.Count})"; pnlEmpty.Visibility = Visibility.Collapsed;
             }
@@ -209,7 +220,7 @@ namespace TestRunnerApp
             finally { btnLoad.IsEnabled = true; btnLoad.Content = "Load Selected"; }
         }
 
-        void BtnRefresh_Click(object s, RoutedEventArgs e) { if (_chkDlls.Count == 0 && _loadedDlls.Count == 0) return; if (_chkDlls.Count == 0) foreach (var d in _loadedDlls) _chkDlls.Add(d); var prev = new HashSet<string>(_sel); BtnLoad_Click(s, e); Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => { foreach (var t in prev) { var ti = _tests.FirstOrDefault(x => x.Name == t); if (ti != null) _sel.Add(t); } RefreshTests(); UpdateBadge(); })); }
+        void BtnRefresh_Click(object s, RoutedEventArgs e) { if (_chkDlls.Count == 0 && _loadedDlls.Count == 0) return; if (_chkDlls.Count == 0) foreach (var d in _loadedDlls) _chkDlls.Add(d); var prev = new HashSet<string>(_sel); _deferRefresh = true; BtnLoad_Click(s, e); Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => { foreach (var t in prev) { var ti = _tests.FirstOrDefault(x => x.Name == t); if (ti != null) _sel.Add(t); } RefreshTests(); UpdateBadge(); })); }
 
         // ═══ TEST LIST WITH INLINE STATUS ═══
         List<TestInfo> GetFiltered()
@@ -225,11 +236,11 @@ namespace TestRunnerApp
 
         void RefreshTests()
         {
-            if (pnlTests == null || txtStat == null) return;
-            pnlTests.Children.Clear();
+            if (lstTests == null || txtStat == null) return;
+            lstTests.Items.Clear();
             var list = GetFiltered();
             if (_tests.Count > 0 && pnlEmpty != null) pnlEmpty.Visibility = Visibility.Collapsed;
-            foreach (var t in list) pnlTests.Children.Add(MkRow(t));
+            foreach (var t in list) lstTests.Items.Add(MkRow(t));
             txtStat.Text = $"{list.Count} of {_tests.Count} tests";
         }
 
