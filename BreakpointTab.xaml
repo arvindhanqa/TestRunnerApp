@@ -25,10 +25,6 @@
             <!-- ROW 2: Toolbar -->
             <RowDefinition Height="*"/>
             <!-- ROW 3: Tree + build output -->
-            <RowDefinition Height="Auto"/>
-            <!-- ROW 4: Pause banner -->
-            <RowDefinition Height="Auto"/>
-            <!-- ROW 5: Checkpoint banner -->
         </Grid.RowDefinitions>
 
         <!-- ══════════════════════════════════════════════════════════════
@@ -248,68 +244,6 @@
                 </Grid>
             </GroupBox>
         </Grid>
-
-        <!-- ══════════════════════════════════════════════════════════════
-             ROW 4 — Pause / Resume Banner
-        ══════════════════════════════════════════════════════════════ -->
-        <Border x:Name="PauseBanner" Grid.Row="4"
-                Background="#FFF3CD" BorderBrush="#FFC107"
-                BorderThickness="1" CornerRadius="4"
-                Margin="0,6,0,0" Padding="10,6"
-                Visibility="Collapsed">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="⏸ " FontSize="18" VerticalAlignment="Center"/>
-                    <TextBlock VerticalAlignment="Center" FontSize="13">
-                        <Run Text="Paused at: "/>
-                        <Run x:Name="RunPausedAt" FontWeight="Bold"/>
-                    </TextBlock>
-                    <TextBlock Text="   — browser and DB are live. Inspect, then resume."
-                               VerticalAlignment="Center" Foreground="#666" FontSize="12"/>
-                </StackPanel>
-                <Button x:Name="BtnResume" Grid.Column="1"
-                        Content="▶  Resume" Width="100" Height="30"
-                        Background="#28A745" Foreground="White" FontWeight="Bold"
-                        Click="BtnResume_Click"/>
-            </Grid>
-        </Border>
-
-        <!-- ══════════════════════════════════════════════════════════════
-             ROW 5 — Checkpoint Activity Banner
-        ══════════════════════════════════════════════════════════════ -->
-        <Border x:Name="CheckpointBanner" Grid.Row="5"
-                Background="#D1ECF1" BorderBrush="#17A2B8"
-                BorderThickness="1" CornerRadius="4"
-                Margin="0,4,0,0" Padding="10,6"
-                Visibility="Collapsed">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0" Text="🔖 " FontSize="18" VerticalAlignment="Center"/>
-
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock x:Name="TxtCheckpointStep"
-                               FontWeight="Bold" FontSize="13"/>
-                    <TextBlock x:Name="TxtCheckpointActivity"
-                               FontSize="11" Foreground="{DynamicResource Fg2}"
-                               Margin="0,2,0,0"/>
-                </StackPanel>
-
-                <ProgressBar x:Name="CheckpointProgress"
-                             Grid.Column="2"
-                             Width="120" Height="14"
-                             IsIndeterminate="True"
-                             Margin="10,0,0,0"/>
-            </Grid>
-        </Border>
 
     </Grid>
 </UserControl>

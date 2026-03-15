@@ -8,6 +8,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -37,7 +38,60 @@
             </Grid>
         </Border>
 
-        <TabControl x:Name="tabs" Grid.Row="1" Style="{StaticResource TC}" Padding="20,0" Background="{DynamicResource BgPage}">
+        <!-- GLOBAL BANNERS (visible on all tabs) -->
+        <StackPanel Grid.Row="1" Margin="20,0,20,0">
+            <!-- Pause / Resume Banner -->
+            <Border x:Name="GlobalPauseBanner"
+                    Background="#FFF3CD" BorderBrush="#FFC107"
+                    BorderThickness="1" CornerRadius="4"
+                    Margin="0,6,0,0" Padding="10,6"
+                    Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="⏸ " FontSize="18" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="13">
+                            <Run Text="Paused at: " Foreground="#333"/>
+                            <Run x:Name="GlobalPausedAt" FontWeight="Bold" Foreground="#333"/>
+                        </TextBlock>
+                        <TextBlock Text="   — browser and DB are live. Inspect, then resume."
+                                   VerticalAlignment="Center" Foreground="#666" FontSize="12"/>
+                    </StackPanel>
+                    <Button x:Name="btnGlobalResume" Grid.Column="1"
+                            Content="▶  Resume" Width="100" Height="30"
+                            Background="#28A745" Foreground="White" FontWeight="Bold"
+                            Click="BtnGlobalResume_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Checkpoint Activity Banner -->
+            <Border x:Name="GlobalCheckpointBanner"
+                    Background="#D1ECF1" BorderBrush="#17A2B8"
+                    BorderThickness="1" CornerRadius="4"
+                    Margin="0,4,0,0" Padding="10,6"
+                    Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="🔖 " FontSize="18" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Name="GlobalCheckpointStep" FontWeight="Bold" FontSize="13" Foreground="#333"/>
+                        <TextBlock x:Name="GlobalCheckpointActivity" FontSize="11" Foreground="#555" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <ProgressBar x:Name="GlobalCheckpointProgress"
+                                 Grid.Column="2" Width="120" Height="14"
+                                 IsIndeterminate="True" Margin="10,0,0,0"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <TabControl x:Name="tabs" Grid.Row="2" Style="{StaticResource TC}" Padding="20,0" Background="{DynamicResource BgPage}">
 
             <!-- ═══════════════ CONFIGURATION ═══════════════ -->
             <TabItem Header="CONFIGURATION" Style="{StaticResource TI}">

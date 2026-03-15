@@ -60,6 +60,10 @@ namespace TestRunnerApp
             {
                 InitializeComponent();
                 BreakpointTabControl.CheckpointCompleted += OnCheckpointCompleted;
+                BreakpointTabControl.PauseDetected += OnPauseDetected;
+                BreakpointTabControl.PauseDismissed += OnPauseDismissed;
+                BreakpointTabControl.CheckpointBannerUpdate += OnCheckpointBannerUpdate;
+                BreakpointTabControl.CheckpointBannerDismissed += OnCheckpointBannerDismissed;
                 S = AppSettings.Load();
                 LoadS();
                 _isDark = S.IsDarkTheme;
@@ -749,6 +753,46 @@ namespace TestRunnerApp
                 MessageBox.Show($"Could not open link:\n{ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+        // ═══ GLOBAL BANNER HANDLERS ═══
+        void OnPauseDetected(string label)
+        {
+            GlobalPausedAt.Text = label;
+            GlobalPauseBanner.Visibility = Visibility.Visible;
+        }
+
+        void OnPauseDismissed()
+        {
+            GlobalPauseBanner.Visibility = Visibility.Collapsed;
+        }
+
+        void BtnGlobalResume_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string flagPath = BreakpointTab.PausedFlagPath;
+                if (File.Exists(flagPath)) File.Delete(flagPath);
+                GlobalPauseBanner.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to resume:\n{ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        void OnCheckpointBannerUpdate(string step, string activity)
+        {
+            if (step != null) GlobalCheckpointStep.Text = step;
+            GlobalCheckpointActivity.Text = activity;
+            GlobalCheckpointBanner.Visibility = Visibility.Visible;
+            GlobalCheckpointProgress.Visibility = Visibility.Visible;
+        }
+
+        void OnCheckpointBannerDismissed()
+        {
+            GlobalCheckpointBanner.Visibility = Visibility.Collapsed;
+            GlobalCheckpointProgress.Visibility = Visibility.Collapsed;
         }
     }
 }

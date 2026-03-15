@@ -39,12 +39,19 @@ namespace TestRunnerApp
         private bool _isBuilding = false;
 
         // Shared flag folder — must match BreakpointHelper.cs
-        private static readonly string FlagFolder = Path.Combine(
+        public static readonly string FlagFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "QATestRunner");
 
-        private static string PausedFlagPath => Path.Combine(FlagFolder, "PAUSED.flag");
+        public static string PausedFlagPath => Path.Combine(FlagFolder, "PAUSED.flag");
         private static string CheckpointFlagPath => Path.Combine(FlagFolder, "CHECKPOINT.flag");
+
+        // ── Events for global banner display (MainWindow subscribes) ─────────
+        public event EventHandler CheckpointCompleted;
+        public event Action<string> PauseDetected;
+        public event Action PauseDismissed;
+        public event Action<string, string> CheckpointBannerUpdate;
+        public event Action CheckpointBannerDismissed;
 
         // ── Constructor ───────────────────────────────────────────────────────
         public BreakpointTab()
@@ -356,31 +363,17 @@ namespace TestRunnerApp
         }
 
         // ══════════════════════════════════════════════════════════════════════
-        // PAUSE / RESUME
+        // PAUSE / RESUME — fires events for MainWindow global banners
         // ══════════════════════════════════════════════════════════════════════
 
         private void ShowPauseBanner(string label)
         {
-            RunPausedAt.Text = string.IsNullOrWhiteSpace(label) ? "(unknown)" : label;
-            PauseBanner.Visibility = Visibility.Visible;
+            string display = string.IsNullOrWhiteSpace(label) ? "(unknown)" : label;
+            PauseDetected?.Invoke(display);
         }
 
         private void HidePauseBanner() =>
-            PauseBanner.Visibility = Visibility.Collapsed;
-
-        private void BtnResume_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (File.Exists(PausedFlagPath)) File.Delete(PausedFlagPath);
-                HidePauseBanner();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to resume:\n{ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+            PauseDismissed?.Invoke();
 
         // ══════════════════════════════════════════════════════════════════════
         // CHECKPOINT SEQUENCE
@@ -450,12 +443,6 @@ namespace TestRunnerApp
                 HideCheckpointBanner();
             }
         }
-
-        /// <summary>
-        /// Raised when the full checkpoint sequence completes successfully.
-        /// MainWindow subscribes to this to advance the test queue.
-        /// </summary>
-        public event EventHandler CheckpointCompleted;
 
         // ── Checkpoint sub-steps ──────────────────────────────────────────────
 
@@ -563,23 +550,19 @@ namespace TestRunnerApp
             return name.Length > 40 ? name.Substring(0, 40) : name;
         }
 
-        // ── Checkpoint banner helpers ─────────────────────────────────────────
+        // ── Checkpoint banner helpers — fires events for MainWindow global banners ──
 
         private void ShowCheckpointBanner(string stepLabel, string activity)
         {
-            TxtCheckpointStep.Text = $"Checkpoint: {stepLabel}";
-            TxtCheckpointActivity.Text = activity;
-            CheckpointBanner.Visibility = Visibility.Visible;
-            CheckpointProgress.Visibility = Visibility.Visible;
+            CheckpointBannerUpdate?.Invoke($"Checkpoint: {stepLabel}", activity);
         }
 
         private void SetCheckpointActivity(string activity) =>
-            TxtCheckpointActivity.Text = activity;
+            CheckpointBannerUpdate?.Invoke(null, activity); // null step = update activity only
 
         private void HideCheckpointBanner()
         {
-            CheckpointBanner.Visibility = Visibility.Collapsed;
-            CheckpointProgress.Visibility = Visibility.Collapsed;
+            CheckpointBannerDismissed?.Invoke();
         }
 
         // ══════════════════════════════════════════════════════════════════════

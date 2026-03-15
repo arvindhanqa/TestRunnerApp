@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -111,7 +112,7 @@ namespace TestRunnerApp
             if (string.IsNullOrEmpty(node.Name))
                 throw new InvalidOperationException("Selected node has no name.");
 
-            var lines = new List<string>(File.ReadAllLines(filePath));
+            var lines = ReadLines(filePath, out var encoding, out var lineEnding, out var trailingNl);
 
             // Remove any existing injected breakpoint lines
             lines.RemoveAll(l => l != null && l.Contains(BreakpointMarker));
@@ -188,16 +189,16 @@ namespace TestRunnerApp
             for (int idx = injection.Count - 1; idx >= 0; idx--)
                 lines.Insert(braceIdx + 1, injection[idx]);
 
-            File.WriteAllLines(filePath, lines);
+            WriteLines(filePath, lines, encoding, lineEnding, trailingNl);
         }
 
         /// <summary>Removes all injected breakpoint lines from the file.</summary>
         public static void ClearAllBreakpoints(string filePath)
         {
-            var lines = new List<string>(File.ReadAllLines(filePath));
+            var lines = ReadLines(filePath, out var encoding, out var lineEnding, out var trailingNl);
             int removed = lines.RemoveAll(l => l.Contains(BreakpointMarker));
             if (removed > 0)
-                File.WriteAllLines(filePath, lines);
+                WriteLines(filePath, lines, encoding, lineEnding, trailingNl);
         }
 
         /// <summary>Returns true if the file currently contains any injected breakpoints.</summary>
@@ -263,5 +264,70 @@ namespace TestRunnerApp
 
         private static string GetIndent(string line) =>
             line.Substring(0, line.Length - line.TrimStart().Length);
+
+        // ── Encoding-preserving I/O ───────────────────────────────────────────
+        // File.WriteAllLines always emits UTF-8 BOM + CRLF + trailing newline.
+        // If the source file uses UTF-8 no-BOM or LF endings, git sees a diff
+        // even when the content is logically identical.  These helpers detect
+        // the original encoding/line-ending style and write back exactly.
+
+        private static Encoding DetectEncoding(string filePath)
+        {
+            byte[] bom = new byte[4];
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                fs.Read(bom, 0, Math.Min(4, (int)fs.Length));
+
+            if (bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF)
+                return new UTF8Encoding(true);   // UTF-8 with BOM
+            if (bom[0] == 0xFF && bom[1] == 0xFE)
+                return Encoding.Unicode;          // UTF-16 LE
+            if (bom[0] == 0xFE && bom[1] == 0xFF)
+                return Encoding.BigEndianUnicode; // UTF-16 BE
+
+            return new UTF8Encoding(false);       // UTF-8 without BOM (most .cs files)
+        }
+
+        private static string DetectLineEnding(string filePath)
+        {
+            using (var sr = new StreamReader(filePath))
+            {
+                int ch;
+                while ((ch = sr.Read()) >= 0)
+                {
+                    if (ch == '\r') return "\r\n"; // CRLF (or bare CR, but CRLF is overwhelmingly common)
+                    if (ch == '\n') return "\n";    // LF
+                }
+            }
+            return "\r\n"; // default
+        }
+
+        private static bool HasTrailingNewline(string filePath)
+        {
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                if (fs.Length == 0) return false;
+                fs.Seek(-1, SeekOrigin.End);
+                return fs.ReadByte() == '\n';
+            }
+        }
+
+        /// <summary>Reads lines and captures the file's encoding metadata.</summary>
+        private static List<string> ReadLines(string filePath,
+            out Encoding encoding, out string lineEnding, out bool trailingNewline)
+        {
+            encoding = DetectEncoding(filePath);
+            lineEnding = DetectLineEnding(filePath);
+            trailingNewline = HasTrailingNewline(filePath);
+            return new List<string>(File.ReadAllLines(filePath));
+        }
+
+        /// <summary>Writes lines back preserving the original encoding, line endings, and trailing newline.</summary>
+        private static void WriteLines(string filePath, List<string> lines,
+            Encoding encoding, string lineEnding, bool trailingNewline)
+        {
+            string content = string.Join(lineEnding, lines);
+            if (trailingNewline) content += lineEnding;
+            File.WriteAllText(filePath, content, encoding);
+        }
     }
 }
