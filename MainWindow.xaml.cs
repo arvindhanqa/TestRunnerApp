@@ -254,13 +254,13 @@ namespace TestRunnerApp
             var bd = new Border { Background = s ? cSel : cCard, BorderBrush = cBdr, BorderThickness = new Thickness(0, 0, 0, 0.5), Padding = new Thickness(4, 5, 4, 5), Cursor = System.Windows.Input.Cursors.Hand };
             var g = new Grid();
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });   // 0: checkbox
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(420) });  // 1: name
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // 1: name (star)
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });  // 2: module
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });   // 3: set breakpoint
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // 4: last archive
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });  // 5: result
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(65) });   // 6: duration
-            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });   // 7: logs
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });   // 3: set breakpoint
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(200) });  // 4: last archive
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });  // 5: result
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(45) });   // 6: logs
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(65) });   // 7: duration
 
             // ── Cells (all with trimming + tooltip + inner margins) ──
             var cb = new CheckBox { IsChecked = s, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center };
@@ -296,7 +296,7 @@ namespace TestRunnerApp
                 BreakpointTabControl.OpenTestFile(csFile);
             };
 
-            // Last Archive (col 4)
+            // Last Archive (col 4) — empty string tooltip blocks parent Desc tooltip
             bool hasArchive = !string.IsNullOrEmpty(t.LastBackupPath);
             var arc = new TextBlock
             {
@@ -306,7 +306,7 @@ namespace TestRunnerApp
                 VerticalAlignment = VerticalAlignment.Center,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(6, 0, 6, 0),
-                ToolTip = hasArchive ? t.LastBackupPath : null,
+                ToolTip = hasArchive ? t.LastBackupPath : "",
                 Cursor = hasArchive ? System.Windows.Input.Cursors.Hand : System.Windows.Input.Cursors.Arrow
             };
             Grid.SetColumn(arc, 4);
@@ -325,13 +325,9 @@ namespace TestRunnerApp
             if (!string.IsNullOrEmpty(t.Status) && t.Status != "Not Run") res.ToolTip = t.Status;
             Grid.SetColumn(res, 5);
 
-            var dur = new TextBlock { Text = t.Duration ?? "", Foreground = cFg2, FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(6, 0, 6, 0) };
-            if (!string.IsNullOrEmpty(t.Duration)) dur.ToolTip = t.Duration;
-            Grid.SetColumn(dur, 6);
-
-            // Log/pic links (col 7)
+            // Logs (col 6) — swapped with Duration to keep away from scrollbar
             var links = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 0, 0) };
-            Grid.SetColumn(links, 7);
+            Grid.SetColumn(links, 6);
             if (t.LogFile != null && File.Exists(t.LogFile))
             {
                 var l = new TextBlock { Text = "📄", FontSize = 13, Foreground = cAcc, Cursor = System.Windows.Input.Cursors.Hand, Margin = new Thickness(0, 0, 4, 0), ToolTip = "View log" };
@@ -347,8 +343,13 @@ namespace TestRunnerApp
                 string pd = txtPicDir.Text; p.MouseLeftButtonUp += (a, b) => { try { Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = pd }); } catch { } }; links.Children.Add(p);
             }
 
+            // Duration (col 7) — now last column, scrollbar-safe
+            var dur = new TextBlock { Text = t.Duration ?? "", Foreground = cFg2, FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(6, 0, 6, 0) };
+            if (!string.IsNullOrEmpty(t.Duration)) dur.ToolTip = t.Duration;
+            Grid.SetColumn(dur, 7);
+
             // ── Add cells ──
-            g.Children.Add(cb); g.Children.Add(nm); g.Children.Add(mod); g.Children.Add(bp); g.Children.Add(arc); g.Children.Add(res); g.Children.Add(dur); g.Children.Add(links);
+            g.Children.Add(cb); g.Children.Add(nm); g.Children.Add(mod); g.Children.Add(bp); g.Children.Add(arc); g.Children.Add(res); g.Children.Add(links); g.Children.Add(dur);
 
             // ── Vertical separators (1px line at right edge of cols 1–6) ──
             for (int c = 1; c <= 6; c++)
@@ -387,8 +388,16 @@ namespace TestRunnerApp
         {
             _showSelectedOnly = !_showSelectedOnly;
             btnSelFilter.Content = _showSelectedOnly ? "✓ Selected" : "Selected";
-            btnSelFilter.Background = _showSelectedOnly ? cAcc : null;
-            btnSelFilter.Foreground = _showSelectedOnly ? Brushes.White : null;
+            if (_showSelectedOnly)
+            {
+                btnSelFilter.Background = cAcc;
+                btnSelFilter.Foreground = Brushes.White;
+            }
+            else
+            {
+                btnSelFilter.ClearValue(Button.BackgroundProperty);
+                btnSelFilter.ClearValue(Button.ForegroundProperty);
+            }
             RefreshTests();
         }
 

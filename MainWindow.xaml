@@ -420,21 +420,21 @@
                             <Grid Grid.Row="2" Margin="0,0,17,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="420" />
-                                    <ColumnDefinition Width="130" />
-                                    <ColumnDefinition Width="90" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="130" />
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="45" />
                                     <ColumnDefinition Width="65" />
-                                    <ColumnDefinition Width="40" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="1" Text="Test Name" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="0,0,6,4" />
                                 <TextBlock Grid.Column="2" Text="Module" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
-                                <TextBlock Grid.Column="3" Text="Set Breakpoint" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
+                                <TextBlock Grid.Column="3" Text="Set BP" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
                                 <TextBlock Grid.Column="4" Text="Last Archive" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
                                 <TextBlock Grid.Column="5" Text="Result" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
-                                <TextBlock Grid.Column="6" Text="Duration" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
-                                <TextBlock Grid.Column="7" Text="Logs" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,0,4" />
+                                <TextBlock Grid.Column="6" Text="Logs" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,6,4" />
+                                <TextBlock Grid.Column="7" Text="Duration" Foreground="{DynamicResource Fg3}" FontSize="11" Margin="6,0,0,4" />
                                 <!-- Header bottom border -->
                                 <Border Grid.ColumnSpan="8" BorderBrush="{DynamicResource Fg3}" BorderThickness="0,0,0,0.5" VerticalAlignment="Bottom" />
                             </Grid>
