@@ -190,17 +190,17 @@
             </Grid.RowDefinitions>
 
             <!-- Test tree -->
-            <GroupBox Grid.Row="0" Header="Test Structure" Padding="4">
+            <GroupBox Grid.Row="0" Header="Test Structure" Padding="6,8,6,6">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,4">
-                        <Button Content="Expand All"   Width="90" Height="22"
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
+                        <Button Content="Expand All"   Width="90" Height="26"
                                 Style="{StaticResource BtnS}"
                                 Margin="0,0,4,0" Click="BtnExpandAll_Click"/>
-                        <Button Content="Collapse All" Width="90" Height="22"
+                        <Button Content="Collapse All" Width="90" Height="26"
                                 Style="{StaticResource BtnS}"
                                 Click="BtnCollapseAll_Click"/>
                         <TextBlock x:Name="TxtNodeHint" VerticalAlignment="Center"
@@ -223,7 +223,7 @@
                           Background="{DynamicResource Bdr}" ShowsPreview="True"/>
 
             <!-- Build output -->
-            <GroupBox Grid.Row="2" Header="Build Output" Padding="4">
+            <GroupBox Grid.Row="2" Header="Build Output" Padding="6,8,6,6">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -237,9 +237,9 @@
                              Background="#1E1E1E" Foreground="#D4D4D4"
                              BorderThickness="0" Padding="6"/>
                     <Button x:Name="BtnClearBuildOutput" Grid.Row="1"
-                            Content="Clear" Width="60" Height="22"
+                            Content="Clear" Width="60" Height="26"
                             Style="{StaticResource BtnS}"
-                            HorizontalAlignment="Right" Margin="0,4,0,0"
+                            HorizontalAlignment="Right" Margin="0,6,0,0"
                             Click="BtnClearBuildOutput_Click"/>
                 </Grid>
             </GroupBox>
