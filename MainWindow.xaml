@@ -40,6 +40,19 @@
 
         <!-- GLOBAL BANNERS (visible on all tabs) -->
         <StackPanel Grid.Row="1" Margin="20,0,20,0">
+            <!-- Breakpoint Active Indicator -->
+            <Border x:Name="GlobalBreakpointBar"
+                    Background="#FCE4EC" BorderBrush="#E53935"
+                    BorderThickness="1" CornerRadius="4"
+                    Margin="0,6,0,0" Padding="10,5"
+                    Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="GlobalBreakpointIcon" Text="🔴" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="GlobalBreakpointText" Text="Pause breakpoint active — rebuild before running"
+                               FontSize="12" FontWeight="SemiBold" Foreground="#C62828" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
             <!-- Pause / Resume Banner -->
             <Border x:Name="GlobalPauseBanner"
                     Background="#FFF3CD" BorderBrush="#FFC107"

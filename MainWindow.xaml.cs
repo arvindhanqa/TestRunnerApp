@@ -64,6 +64,7 @@ namespace TestRunnerApp
                 BreakpointTabControl.PauseDismissed += OnPauseDismissed;
                 BreakpointTabControl.CheckpointBannerUpdate += OnCheckpointBannerUpdate;
                 BreakpointTabControl.CheckpointBannerDismissed += OnCheckpointBannerDismissed;
+                BreakpointTabControl.BreakpointStatusChanged += OnBreakpointStatusChanged;
                 S = AppSettings.Load();
                 LoadS();
                 _isDark = S.IsDarkTheme;
@@ -804,6 +805,26 @@ namespace TestRunnerApp
         {
             GlobalCheckpointBanner.Visibility = Visibility.Collapsed;
             GlobalCheckpointProgress.Visibility = Visibility.Collapsed;
+        }
+
+        void OnBreakpointStatusChanged(bool isActive, string modeLabel)
+        {
+            if (isActive)
+            {
+                GlobalBreakpointIcon.Text = modeLabel.StartsWith("🔖") ? "🔖" : "🔴";
+                GlobalBreakpointText.Text = $"{modeLabel} breakpoint active — rebuild before running";
+                GlobalBreakpointBar.Background = modeLabel.StartsWith("🔖")
+                    ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0F3F8"))
+                    : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FCE4EC"));
+                GlobalBreakpointBar.BorderBrush = modeLabel.StartsWith("🔖")
+                    ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#17A2B8"))
+                    : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E53935"));
+                GlobalBreakpointBar.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GlobalBreakpointBar.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

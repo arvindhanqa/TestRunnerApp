@@ -52,6 +52,8 @@ namespace TestRunnerApp
         public event Action PauseDismissed;
         public event Action<string, string> CheckpointBannerUpdate;
         public event Action CheckpointBannerDismissed;
+        /// <summary>Fired when a breakpoint is set or cleared. Args: isActive, modeLabel (e.g. "🔴 Pause" or "🔖 Checkpoint")</summary>
+        public event Action<bool, string> BreakpointStatusChanged;
 
         // ── Constructor ───────────────────────────────────────────────────────
         public BreakpointTab()
@@ -297,6 +299,7 @@ namespace TestRunnerApp
                 TxtBreakpointStatus.Text = "No breakpoint set";
                 TxtBreakpointStatus.Foreground = Brushes.DimGray;
                 BtnSetBreakpoint.Content = "Set Breakpoint";
+                BreakpointStatusChanged?.Invoke(false, null);
                 return;
             }
 
@@ -305,12 +308,14 @@ namespace TestRunnerApp
                 TxtBreakpointStatus.Text = "🔖 Checkpoint active — rebuild before running";
                 TxtBreakpointStatus.Foreground = new SolidColorBrush(Color.FromRgb(0, 123, 167));
                 BtnSetBreakpoint.Content = "🔖 Set Checkpoint";
+                BreakpointStatusChanged?.Invoke(true, "🔖 Checkpoint");
             }
             else
             {
                 TxtBreakpointStatus.Text = "🔴 Pause breakpoint active — rebuild before running";
                 TxtBreakpointStatus.Foreground = Brushes.Crimson;
                 BtnSetBreakpoint.Content = "🔴 Set Pause";
+                BreakpointStatusChanged?.Invoke(true, "🔴 Pause");
             }
         }
 
