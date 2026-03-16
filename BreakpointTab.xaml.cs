@@ -508,9 +508,9 @@ namespace TestRunnerApp
 
             try
             {
-                // Build connection string for master DB (needed to restore)
+                // Use Windows Authentication (Integrated Security) — matches sqlcmd -E used elsewhere
                 string connStr = $"Server={cfg.DbServer};Database=master;" +
-                                 $"User Id={MasterDbUser(cfg)};Password={MasterDbPass(cfg)};" +
+                                 "Integrated Security=True;" +
                                  "Connect Timeout=30;";
 
                 string sql = $@"
@@ -538,10 +538,9 @@ namespace TestRunnerApp
             }
         }
 
-        // SQL auth helpers — extend AppSettings with SqlUser/SqlPassword if needed,
-        // or switch to Integrated Security by changing the connection string below.
-        private static string MasterDbUser(AppSettings cfg) => "sa";
-        private static string MasterDbPass(AppSettings cfg) => cfg.Password;
+        // SQL auth helpers kept for reference if anyone needs SQL auth in the future
+        // private static string MasterDbUser(AppSettings cfg) => "sa";
+        // private static string MasterDbPass(AppSettings cfg) => cfg.Password;
 
         private static string SanitiseFileName(string name)
         {

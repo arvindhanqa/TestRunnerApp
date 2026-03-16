@@ -407,8 +407,8 @@ namespace TestRunnerApp
 
         async Task<int> RunCmd(string exe, string args, CancellationToken ct) { var psi = new ProcessStartInfo { FileName = exe, Arguments = args, UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true }; _proc = Process.Start(psi); ct.Register(() => { try { KillTree(_proc); } catch { } }); await Task.Run(() => _proc.WaitForExit(), ct); var c = _proc.ExitCode; _proc = null; return c; }
         void KillTree(Process p) { if (p == null || p.HasExited) return; try { Process.Start(new ProcessStartInfo("taskkill", $"/T /F /PID {p.Id}") { UseShellExecute = false, CreateNoWindow = true })?.WaitForExit(5000); } catch { try { p.Kill(); } catch { } } }
-        async Task RestoreDb(string bak, CancellationToken ct) { await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"ALTER DATABASE [{txtDb.Text}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\"", ct); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"RESTORE DATABASE [{txtDb.Text}] FROM DISK = N'{bak}' WITH FILE = 1, NOUNLOAD, REPLACE, STATS = 5\"", ct); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"ALTER DATABASE [{txtDb.Text}] SET MULTI_USER\"", ct); }
-        async Task BackupDb(string t, CancellationToken ct) { string n = $"{t}_{txtDb.Text}_{txtVer.Text}_{DateTime.Now:yyyyMMdd_HHmmss}"; foreach (var c in Path.GetInvalidFileNameChars()) n = n.Replace(c, '_'); string d = txtBakOut.Text.Trim(); if (!Directory.Exists(d)) Directory.CreateDirectory(d); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"BACKUP DATABASE [{txtDb.Text}] TO DISK = N'{Path.Combine(d, n + ".bak")}' WITH FORMAT, INIT, NAME = N'{n}'\"", ct); }
+        async Task RestoreDb(string bak, CancellationToken ct) { await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"ALTER DATABASE [{txtDb.Text}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\"", ct); int exit = await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"RESTORE DATABASE [{txtDb.Text}] FROM DISK = N'{bak}' WITH FILE = 1, NOUNLOAD, REPLACE, STATS = 5\"", ct); if (exit != 0) throw new Exception($"sqlcmd RESTORE exited with code {exit}"); await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"ALTER DATABASE [{txtDb.Text}] SET MULTI_USER\"", ct); }
+        async Task BackupDb(string t, CancellationToken ct) { string n = $"{t}_{txtDb.Text}_{txtVer.Text}_{DateTime.Now:yyyyMMdd_HHmmss}"; foreach (var c in Path.GetInvalidFileNameChars()) n = n.Replace(c, '_'); string d = txtBakOut.Text.Trim(); if (!Directory.Exists(d)) Directory.CreateDirectory(d); int exit = await RunCmd("sqlcmd", $"-E -S {txtSrv.Text} -Q \"BACKUP DATABASE [{txtDb.Text}] TO DISK = N'{Path.Combine(d, n + ".bak")}' WITH FORMAT, INIT, NAME = N'{n}'\"", ct); if (exit != 0) throw new Exception($"sqlcmd exited with code {exit}"); }
         string ArchiveLogs(string t) { string a = txtArcDir.Text.Trim(); if (string.IsNullOrEmpty(a)) return null; string f = Path.Combine(a, $"{t}_{txtVer.Text.Replace(".", "_")}_{DateTime.Now:yyyyMMdd_HHmmss}"); try { Directory.CreateDirectory(Path.Combine(f, "logs")); Directory.CreateDirectory(Path.Combine(f, "pics")); if (Directory.Exists(txtLogDir.Text)) foreach (var x in Directory.GetFiles(txtLogDir.Text)) File.Copy(x, Path.Combine(f, "logs", Path.GetFileName(x)), true); if (Directory.Exists(txtPicDir.Text)) foreach (var x in Directory.GetFiles(txtPicDir.Text)) File.Copy(x, Path.Combine(f, "pics", Path.GetFileName(x)), true); return f; } catch { return null; } }
         string FindLog(string t) { try { return Directory.GetFiles(txtLogDir.Text, $"{t}_*").OrderByDescending(File.GetLastWriteTime).FirstOrDefault(); } catch { return null; } }
         bool CheckFailed(string t) { var l = FindLog(t); if (l == null) try { l = Directory.GetFiles(txtLogDir.Text, "Log_*").OrderByDescending(File.GetLastWriteTime).FirstOrDefault(); } catch { } if (l != null) try { return File.ReadAllText(l).Contains("Error :"); } catch { } return false; }
@@ -462,7 +462,8 @@ namespace TestRunnerApp
 
                     // 4. Backup
                     bool doBak = bm == BackupMode.Always || (bm == BackupMode.FailedOnly && f);
-                    if (doBak) { UpdateTestStatus(test.Name, f ? "FAILED — saving DB..." : "PASSED — saving DB...", dur, logFile); try { await BackupDb(test.Name, _cts.Token); } catch { } }
+                    bool bakOk = false;
+                    if (doBak) { UpdateTestStatus(test.Name, f ? "FAILED — saving DB..." : "PASSED — saving DB...", dur, logFile); try { await BackupDb(test.Name, _cts.Token); bakOk = true; } catch { UpdateTestStatus(test.Name, f ? "FAILED — DB backup failed" : "PASSED — DB backup failed", dur, logFile); } }
 
                     // 5. Archive
                     string archivePath = ArchiveLogs(test.Name);
@@ -480,7 +481,8 @@ namespace TestRunnerApp
                     }
 
                     // 7. Final status
-                    string st = f ? "FAILED" : "PASSED"; if (doBak) st += " (DB saved)";
+                    string st = f ? "FAILED" : "PASSED";
+                    if (doBak) st += bakOk ? " (DB saved)" : " (DB backup failed)";
                     UpdateTestStatus(test.Name, st, dur, logFile);
                 }
             }
