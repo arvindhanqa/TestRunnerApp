@@ -109,6 +109,36 @@ namespace TestRunnerApp
         }
         void Window_Closing(object s, System.ComponentModel.CancelEventArgs e) { _watcher?.Dispose(); _cts?.Cancel(); SaveS(); }
 
+        // ─── Config validation ───────────────────────────────────────────────────────
+        void SetFieldError(TextBox tb, bool isError, string message = "")
+        {
+            tb.Tag     = isError ? "err" : null;
+            tb.ToolTip = isError ? message : null;
+        }
+
+        void ValidateCfgField(TextBox tb)
+        {
+            if      (tb == txtUrl)    SetFieldError(tb, string.IsNullOrWhiteSpace(tb.Text) || (!tb.Text.StartsWith("http://") && !tb.Text.StartsWith("https://")), "Enter a valid URL (must start with http:// or https://)");
+            else if (tb == txtLogin)  SetFieldError(tb, string.IsNullOrWhiteSpace(tb.Text), "Username is required");
+            else if (tb == txtSrv)    SetFieldError(tb, string.IsNullOrWhiteSpace(tb.Text), "SQL Server is required");
+            else if (tb == txtDb)     SetFieldError(tb, string.IsNullOrWhiteSpace(tb.Text), "Database name is required");
+            else if (tb == txtBrowser && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb, !File.Exists(tb.Text), "Browser executable not found at this path");
+            else if (tb == txtExe     && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb, !File.Exists(tb.Text), "Testproj.exe not found at this path");
+            else if (tb == txtBak     && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb,
+                !tb.Text.EndsWith(".bak", StringComparison.OrdinalIgnoreCase) || !File.Exists(tb.Text),
+                !tb.Text.EndsWith(".bak", StringComparison.OrdinalIgnoreCase) ? "Backup file must have a .bak extension" : "Backup file not found at this path");
+            else if (tb == txtBakOut  && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb, !Directory.Exists(tb.Text), "Backup folder not found");
+            else if (tb == txtLogDir  && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb, !Directory.Exists(tb.Text), "Log folder not found");
+            else if (tb == txtPicDir  && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb, !Directory.Exists(tb.Text), "Screenshot folder not found");
+            else if (tb == txtArcDir  && !string.IsNullOrWhiteSpace(tb.Text)) SetFieldError(tb, !Directory.Exists(tb.Text), "Archive folder not found");
+            else SetFieldError(tb, false);
+        }
+
+        void CfgField_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb) ValidateCfgField(tb);
+        }
+
         // ═══ BROWSE ═══
         void Browse_Click(object s, RoutedEventArgs e) { switch ((s as Button)?.Tag?.ToString()) { case "bak": BrF(txtBak, "BAK|*.bak|All|*.*"); break; case "bakout": BrD(txtBakOut); break; case "browser": BrF(txtBrowser, "EXE|*.exe"); break; case "exe": BrF(txtExe, "EXE/DLL|*.exe;*.dll"); break; case "logdir": BrD(txtLogDir); break; case "picdir": BrD(txtPicDir); break; case "arcdir": BrD(txtArcDir); break; } }
         void BrF(TextBox t, string f) { var d = new OpenFileDialog { Filter = f }; var dir = Path.GetDirectoryName(t.Text); if (Directory.Exists(dir)) d.InitialDirectory = dir; if (d.ShowDialog() == true) t.Text = d.FileName; }

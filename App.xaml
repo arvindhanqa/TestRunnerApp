@@ -47,6 +47,10 @@
                                     <Setter TargetName="bd" Property="BorderBrush"   Value="{DynamicResource BdrFocus}" />
                                     <Setter TargetName="bd" Property="BorderThickness" Value="1.5" />
                                 </Trigger>
+                                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="err">
+                                    <Setter TargetName="bd" Property="BorderBrush"    Value="{StaticResource Err}" />
+                                    <Setter TargetName="bd" Property="BorderThickness" Value="1.5" />
+                                </DataTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>

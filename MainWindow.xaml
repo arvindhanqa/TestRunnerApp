@@ -130,7 +130,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Site URL" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtUrl" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtUrl" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
@@ -138,7 +138,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Username" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtLogin" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtLogin" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
@@ -193,7 +193,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="SQL Server" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtSrv" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtSrv" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
@@ -201,7 +201,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Database" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtDb" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtDb" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
@@ -211,7 +211,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Backup File" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtBak" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtBak" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="bak" />
                                 <Button Grid.Column="3" Content="Restore" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="BtnRestore_Click" />
                             </Grid>
@@ -222,7 +222,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Backup Folder" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtBakOut" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtBakOut" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="bakout" />
                             </Grid>
                             <Grid Margin="0,0,0,0">
@@ -251,7 +251,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Browser" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtBrowser" Grid.Column="1" Style="{StaticResource TB}" Grid.ColumnSpan="2" Margin="4,0,68,0" />
+                                <TextBox x:Name="txtBrowser" Grid.Column="1" Style="{StaticResource TB}" Grid.ColumnSpan="2" Margin="4,0,68,0" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="10,0,-4,0" Click="Browse_Click" Tag="browser" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
@@ -269,7 +269,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Testproj.exe path" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtExe" Grid.Column="1" Style="{StaticResource TB}" Grid.ColumnSpan="2" Margin="4,0,68,0" />
+                                <TextBox x:Name="txtExe" Grid.Column="1" Style="{StaticResource TB}" Grid.ColumnSpan="2" Margin="4,0,68,0" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="10,0,-4,0" Click="Browse_Click" Tag="exe" />
                             </Grid>
                         </StackPanel>
@@ -307,7 +307,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Log Folder" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtLogDir" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtLogDir" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="logdir" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
@@ -317,7 +317,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Screenshot Folder" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtPicDir" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtPicDir" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="picdir" />
                             </Grid>
                             <Grid Margin="0,0,0,6">
@@ -327,7 +327,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Style="{StaticResource Lbl}" Text="Archive Folder" VerticalAlignment="Center" />
-                                <TextBox x:Name="txtArcDir" Grid.Column="1" Style="{StaticResource TB}" />
+                                <TextBox x:Name="txtArcDir" Grid.Column="1" Style="{StaticResource TB}" LostFocus="CfgField_LostFocus" />
                                 <Button Grid.Column="2" Content="Browse" Style="{StaticResource BtnS}" Margin="6,0,0,0" Click="Browse_Click" Tag="arcdir" />
                             </Grid>
                             <Grid Margin="0,0,0,0">
