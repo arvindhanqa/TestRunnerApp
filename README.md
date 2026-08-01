@@ -1,4 +1,4 @@
-# QA Test Runner — WPF Desktop Application
+# Local Test Portal — WPF Desktop Application
 
 A Windows desktop tool for configuring, executing, and reviewing Acumatica QA test automation results.
 
@@ -8,12 +8,14 @@ A Windows desktop tool for configuring, executing, and reviewing Acumatica QA te
 - Edit site URL, credentials, DB restore settings, paths, and logging — all with browse buttons
 - Set backup mode: Always / Failed Only / Never
 - Configure screenshot and archive folders
+- Inline field validation — flags invalid URLs, missing required fields, and paths that don't exist, with tooltip explanations
 
 ### Tests Tab
 - **Load tests from DLL** via .NET reflection — scans for `Tests*.dll` / `Test*.dll` assemblies
-- Filter by module or search by name
+- Filter by module or search by name, or show only Selected tests
 - Click-to-toggle test selection, Select All / None
-- Auto-reloads when DLLs change on disk
+- Auto-reloads when DLLs change on disk (gated by timestamp for performance) and after a rebuild
+- Virtualized list for fast scrolling with large test suites
 - Inline status per test row (Not Run / Running / PASSED / FAILED / CHECKPOINT)
 - Click 📄 to jump directly to that test's log in the Results tab
 - Click 🔴 to open the test source file directly in the Breakpoints tab
@@ -58,6 +60,13 @@ Set pause or checkpoint breakpoints inside any test `.cs` file — no changes to
 - Every injected line carries `// 🔴 BREAKPOINT - TestRunner` so **Clear All** removes them precisely
 - The `.sln` path and last opened `.cs` file are persisted in AppSettings between sessions
 - Nothing is ever committed to git — you control when to build and when to clear
+- A global pause/checkpoint indicator bar stays visible on every tab while a breakpoint is active
+
+### Links Tab
+Quick-launch buttons for commonly used environments and resources (e.g. Acumatica Deploy, Acumatica Test Portal), grouped by category.
+
+## Appearance
+- Toggle between Dark and Light themes from the header (🌙 / ☀️) — the choice is persisted in AppSettings
 
 ## How to Build
 
